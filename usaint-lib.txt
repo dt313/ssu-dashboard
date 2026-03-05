@@ -1,0 +1,84 @@
+# usaint-lib Documentation
+
+## 1. Introduction
+`usaint-lib` is a lightweight TypeScript library designed to interact with Soongsil University's u-SAINT system. it specifically handles the complexities of SAP WebDynpro ABAP (WDA) applications, providing a high-level API to perform SSO authentication, navigate UI elements, and extract data (like tables) from the u-SAINT portal.
+
+## 2. Usage
+Install the library using your preferred package manager:
+```bash
+pnpm add usaint-lib
+```
+
+The library is built around two main clients:
+- **`SapSsoClient`**: Handles the initial login to acquire necessary session cookies.
+- **`SapWdaClient`**: Handles the interaction with specific u-SAINT services (e.g., Grades, Tuition, Registration).
+
+## 3. How to Use (Workflow)
+
+### Step 1: Login & Acquire Cookies
+Use `SapSsoClient` to log in with a student ID and password.
+```typescript
+import { SapSsoClient } from 'usaint-lib';
+
+const ssoClient = new SapSsoClient();
+const cookieString = await ssoClient.login('STUDENT_ID', 'PASSWORD');
+```
+
+### Step 2: Initialize WDA Client
+Use the acquired cookies to initialize a session for a specific SAP application.
+```typescript
+import { SapWdaClient } from 'usaint-lib';
+
+// URL and AppName vary depending on the service (e.g., Tuition: ZCMW6520n)
+const wdaClient = new SapWdaClient('https://ecc.ssu.ac.kr:8443', 'APP_NAME', cookieString);
+await wdaClient.initialize();
+```
+
+### Step 3: Interact with UI Controls
+Find elements by their ID and perform actions or read data.
+```typescript
+const table = wdaClient.getControlById<SapTable>('TABLE_ID');
+const rows = await table.getAllRows();
+console.log(rows);
+```
+
+---
+
+## 4. Library API Reference
+
+### Core Clients
+
+#### `SapSsoClient`
+- `login(userid, pwd)`: Performs SSO login. Returns a `Promise<string>` (cookie string).
+- `getCookieString()`: Returns the currently stored cookies as a string.
+
+#### `SapWdaClient`
+- `initialize()`: Performs the initial handshake with the SAP server.
+- `setRawCookies(cookieString)`: Manually set or update the session cookies.
+- `getControlById<T>(id)`: Returns a wrapped SAP control (Button, Input, Table, etc.) by its DOM ID.
+- `dispatchEvents(queue)`: Sends a queue of interaction events to the server.
+
+### UI Controls (Inherit from `SapControl`)
+
+#### `SapButton`
+- `press()`: Simulates a click on the button.
+
+#### `SapInput`
+- `value`: Getter/Setter for the input field text.
+
+#### `SapComboBox`
+- `selectByKey(key)`: Selects an option from the dropdown by its internal key.
+
+#### `SapTable`
+- `getTotalRowCount()`: Returns total rows in the dataset.
+- `getTotalColumnCount()`: Returns total data columns.
+- `getHeaders()`: Returns an array of column header names.
+- `getVisibleRows()`: Returns data for rows currently rendered in the DOM.
+- `getAllRows()`: Asynchronously scrolls through the entire table and returns all data.
+- `scrollVertical(index)`: Scrolls the table to a specific row index.
+- `selectCell(rowIndex, colIndex)`: Selects a specific cell in the table.
+
+### Utilities & Helpers
+- `createControl(el, client)`: Factory function to wrap a Cheerio element into a `SapControl`.
+- `registerControl(type, class)`: Allows extending the library with custom SAP control wrappers.
+- `SapEventQueue`: A utility to batch multiple UI interactions into a single server request.

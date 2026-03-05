@@ -1,70 +1,15 @@
-import instance, { credentialInstance } from '@/config/axios';
+import axios, { isAxiosError } from 'axios';
+import { UsaintLoginRequest, UsaintLoginResponse } from '@/types/api';
 
-import { getErrorMessage } from '@/utils';
-
-type LoginData = {
-    email: string;
-    password: string;
-};
-
-type RegisterData = {
-    name: string;
-    email: string;
-    password: string;
-};
-
-export const authWithGoogle = async () => {
+export const loginWithUsaint = async (data: UsaintLoginRequest): Promise<UsaintLoginResponse> => {
     try {
-        const response = await instance.get('/auth/google');
+        const response = await axios.post<UsaintLoginResponse>('/api/auth/usaint', data);
         return response.data;
     } catch (error) {
-        console.log(error);
-    }
-};
-
-export const login = async (data: LoginData) => {
-    try {
-        const response = await instance.post('/auth/login', data);
-        return response.data;
-    } catch (error) {
-        console.error('Error logging in:', error);
+        console.error('Error logging in with u-SAINT:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
         throw error;
-    }
-};
-
-export const register = async (data: RegisterData) => {
-    try {
-        const response = await instance.post('/auth/register', data);
-        return response.data;
-    } catch (error) {
-        console.error('Error registering:', error);
-        throw error;
-    }
-};
-
-export const getMe = async () => {
-    try {
-        const response = await instance.get('/users/me');
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-};
-
-export const logout = async () => {
-    try {
-        const response = await instance.post('/auth/logout');
-        return response.data;
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-export const refreshToken = async () => {
-    try {
-        const response = await credentialInstance.post('/auth/refresh-token');
-        return response.data;
-    } catch (error) {
-        console.log(error);
     }
 };

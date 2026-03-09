@@ -1,4 +1,4 @@
-import { GraduationInfo, StudentInfo, TimetableInfo, TuitionInfo, UsaintApiRequest, UsaintApiResponse } from '@/types/api';
+import { ChapelInfo, GraduationInfo, StudentInfo, TimetableInfo, TuitionInfo, UsaintApiRequest, UsaintApiResponse } from '@/types/api';
 import axios, { isAxiosError } from 'axios';
 import { useUsaintStore } from '@/store/use-usaint-store';
 
@@ -59,6 +59,22 @@ export const callGraduationApi = async (data: UsaintApiRequest): Promise<UsaintA
         return response.data;
     } catch (error) {
         console.error('Error calling u-SAINT Graduation API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};
+
+export const callChapelApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<ChapelInfo[]>> => {
+    try {
+        const response = await axios.post<UsaintApiResponse<ChapelInfo[]>>('/api/usaint/chapel', data);
+        if (response.data.success) {
+            useUsaintStore.getState().setChapelInfo(response.data.data);
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT Chapel API:', error);
         if (isAxiosError(error)) {
             throw error.response?.data || error;
         }

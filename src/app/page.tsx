@@ -10,13 +10,14 @@ import { StudentInfoCard } from '@/components/student-info';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { TimetableCard } from '@/components/timetable-card';
 import { TuitionCard } from '@/components/tuition-card';
+import { ChapelCard } from '@/components/chapel-card';
 import { Loader } from '@/components/ui/loader';
 
 import { usaintService } from '@/services';
 
 export default function Home() {
     const { appSessionId, isAuthenticated, logout } = useAuthStore();
-    const { studentInfo, tuitionInfo, timetableInfo, graduationInfo } = useUsaintStore();
+    const { studentInfo, tuitionInfo, timetableInfo, graduationInfo, chapelInfo } = useUsaintStore();
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -24,7 +25,7 @@ export default function Home() {
             if (!appSessionId || !isAuthenticated) return;
 
             // If we don't have any data yet, show the loader
-            if (!studentInfo && !tuitionInfo && !timetableInfo && !graduationInfo) {
+            if (!studentInfo && !tuitionInfo && !timetableInfo && !graduationInfo && !chapelInfo) {
                 setIsLoading(true);
             }
 
@@ -35,6 +36,7 @@ export default function Home() {
                     usaintService.callTuitionApi({ appSessionId }),
                     usaintService.callTimetableApi({ appSessionId }),
                     usaintService.callGraduationApi({ appSessionId }),
+                    usaintService.callChapelApi({ appSessionId }),
                 ]);
             } catch (error: any) {
                 console.error('Error fetching data:', error);
@@ -133,6 +135,7 @@ export default function Home() {
                                     <div className="lg:col-span-2 flex flex-col gap-6">
                                         {studentInfo && <StudentInfoCard data={studentInfo} />}
                                         {tuitionInfo && tuitionInfo.length > 0 && <TuitionCard data={tuitionInfo} />}
+                                        {chapelInfo && chapelInfo.length > 0 && <ChapelCard data={chapelInfo} />}
                                     </div>
 
                                     {/* Right Column (Graduation Audit): Takes 3/5 width */}

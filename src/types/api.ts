@@ -61,6 +61,21 @@ export interface GraduationInfo {
     categories: GraduationCategory[];
 }
 
+export interface ChapelInfo {
+    subjectName: string;
+    section: string;
+    professor: string;
+    location: string;
+    floor: string;
+    seatNumber: string;
+    totalAttendance: string;
+    attendedAttendance: string;
+    lateAttendance: string;
+    absentAttendance: string;
+    result: string;
+    remarks: string;
+}
+
 export interface UsaintApiResponse<T = Record<string, never>> {
     success: boolean;
     data: T;

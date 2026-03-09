@@ -1,7 +1,9 @@
 'use client';
 
 import { StudentInfo } from '@/types/api';
+
 import Avatar from '@/components/ui/avatar';
+
 import { cn } from '@/utils/cn';
 
 interface StudentInfoProps {
@@ -10,16 +12,7 @@ interface StudentInfoProps {
 }
 
 export function StudentInfoCard({ data, className }: StudentInfoProps) {
-    const {
-        name,
-        studentId,
-        faculty,
-        department,
-        year,
-        semester,
-        englishName,
-        avatar,
-    } = data;
+    const { name, studentId, faculty, department, year, semester, englishName, avatar } = data;
 
     const initials = name?.slice(0, 2).toUpperCase() || 'ST';
 
@@ -73,17 +66,13 @@ export function StudentInfoCard({ data, className }: StudentInfoProps) {
                             <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
                                 Faculty
                             </p>
-                            <p className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                                {faculty}
-                            </p>
+                            <p className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-50">{faculty}</p>
                         </div>
                         <div className="relative overflow-hidden rounded-xl bg-zinc-50/50 p-4 dark:bg-zinc-900/50">
                             <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
                                 Department
                             </p>
-                            <p className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-50">
-                                {department}
-                            </p>
+                            <p className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-50">{department}</p>
                         </div>
                     </div>
                 </div>
@@ -91,4 +80,3 @@ export function StudentInfoCard({ data, className }: StudentInfoProps) {
         </div>
     );
 }
-

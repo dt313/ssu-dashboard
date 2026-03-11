@@ -7,13 +7,13 @@ interface UsaintState {
     tuitionInfo: TuitionInfo[] | null;
     timetableInfo: string[][] | null;
     graduationInfo: GraduationInfo | null;
-    chapelInfo: ChapelInfo[] | null;
+    chapelInfo: ChapelInfo | null;
     
     setStudentInfo: (info: StudentInfo | null) => void;
     setTuitionInfo: (info: TuitionInfo[] | null) => void;
     setTimetableInfo: (info: string[][] | null) => void;
     setGraduationInfo: (info: GraduationInfo | null) => void;
-    setChapelInfo: (info: ChapelInfo[] | null) => void;
+    setChapelInfo: (info: ChapelInfo | null) => void;
     
     clearUsaintData: () => void;
 }

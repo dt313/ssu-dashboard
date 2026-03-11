@@ -5,12 +5,12 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/use-auth-store';
 import { useUsaintStore } from '@/store/use-usaint-store';
 
+import { ChapelCard } from '@/components/chapel-card';
 import { GraduationCard } from '@/components/graduation-card';
 import { StudentInfoCard } from '@/components/student-info';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { TimetableCard } from '@/components/timetable-card';
 import { TuitionCard } from '@/components/tuition-card';
-import { ChapelCard } from '@/components/chapel-card';
 import { Loader } from '@/components/ui/loader';
 
 import { usaintService } from '@/services';
@@ -134,8 +134,8 @@ export default function Home() {
                                     {/* Left Column (Student Info + Tuition): Takes 2/5 width */}
                                     <div className="lg:col-span-2 flex flex-col gap-6">
                                         {studentInfo && <StudentInfoCard data={studentInfo} />}
+                                        <ChapelCard data={chapelInfo} studentId={studentInfo?.studentId} />
                                         {tuitionInfo && tuitionInfo.length > 0 && <TuitionCard data={tuitionInfo} />}
-                                        {chapelInfo && chapelInfo.length > 0 && <ChapelCard data={chapelInfo} />}
                                     </div>
 
                                     {/* Right Column (Graduation Audit): Takes 3/5 width */}

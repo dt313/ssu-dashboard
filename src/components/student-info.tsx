@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 
-import { useToastStore } from '@/store/use-toast-store';
 import { StudentInfo } from '@/types/api';
 import { Check, Copy } from 'lucide-react';
 
@@ -17,7 +16,7 @@ interface StudentInfoProps {
 }
 
 export function StudentInfoCard({ data, className }: StudentInfoProps) {
-    const { name, studentId, faculty, department, year, semester, englishName, avatar } = data;
+    const { name, studentId, faculty, department, year, semester, englishName, avatar, admissionDate } = data;
     const [copied, setCopied] = useState(false);
 
     const initials = name?.slice(0, 2).toUpperCase() || 'ST';
@@ -30,6 +29,7 @@ export function StudentInfoCard({ data, className }: StudentInfoProps) {
                 Department: ${department}
                 Term: ${year}학년 ${semester}학기
                 English Name: ${englishName}
+                Admission Date: ${admissionDate}
                         `.trim();
 
         navigator.clipboard.writeText(info).then(() => {
@@ -88,6 +88,11 @@ export function StudentInfoCard({ data, className }: StudentInfoProps) {
             <div className="flex items-center justify-between p-2 px-8">
                 <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Department </span>
                 <p className="text-md text-primary tracking-tight">{department}</p>
+            </div>
+
+            <div className="flex items-center justify-between p-2 px-8">
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Admission Date </span>
+                <p className="text-md text-primary tracking-tight">{admissionDate}</p>
             </div>
         </div>
     );

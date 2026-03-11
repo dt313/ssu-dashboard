@@ -20,6 +20,7 @@ const CONTROL_IDS = {
     HANJA_NAME: 'ZCMW1001.ID_0001:VIW_DEFAULT.BIRTHNAME',
     EMAIL: 'ZCMW1001.ID_0001:VIW_DEFAULT.SMTP_ADDR',
     AVATAR: 'ZCMW1001.ID_0001:VIW_DEFAULT.ST_IMAGE',
+    ADMISSION_DATE: 'ZCMW1001.ID_0001:VIW_DEFAULT.TC_DEFAULT_APPLY_DT',
 };
 
 export const POST = withErrorHandling(async (request: Request) => {
@@ -53,6 +54,10 @@ export const POST = withErrorHandling(async (request: Request) => {
         );
     }
 
+    // // write html to file for debugging
+    const fs = require('fs');
+    fs.writeFileSync('student-info.html', wda.$.html());
+
     // 3️⃣ Extract data
     const lastName = getControlValue(wda, CONTROL_IDS.LAST_NAME);
     const firstName = getControlValue(wda, CONTROL_IDS.FIRST_NAME);
@@ -67,9 +72,7 @@ export const POST = withErrorHandling(async (request: Request) => {
         // We can use a regex to extract the URL in field 3
         const urlMatch = lsDataStr.match(/3:'([^']+)'/);
         if (urlMatch && urlMatch[1]) {
-            avatarUrl = urlMatch[1].replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) => 
-                String.fromCharCode(parseInt(hex, 16))
-            );
+            avatarUrl = urlMatch[1].replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
         }
     }
 
@@ -84,6 +87,7 @@ export const POST = withErrorHandling(async (request: Request) => {
         semester: getControlValue(wda, CONTROL_IDS.SEMESTER),
         englishName: getControlValue(wda, CONTROL_IDS.ENGLISH_NAME),
         hanjaName: getControlValue(wda, CONTROL_IDS.HANJA_NAME),
+        admissionDate: getControlValue(wda, CONTROL_IDS.ADMISSION_DATE),
         avatar: avatarUrl,
     };
 

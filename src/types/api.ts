@@ -22,6 +22,7 @@ export interface StudentInfo {
     semester: string;
     englishName: string;
     hanjaName: string;
+    admissionDate: string;
     avatar?: string;
 }
 
@@ -61,19 +62,34 @@ export interface GraduationInfo {
     categories: GraduationCategory[];
 }
 
+export interface ChapelAttendance {
+    section: string;
+    date: string;
+    type: string;
+    lecturer: string;
+    department: string;
+    title: string;
+    status: string;
+    evaluation: string;
+    remarks: string;
+}
+
 export interface ChapelInfo {
+    year: string;
+    semester: string;
     subjectName: string;
     section: string;
     professor: string;
+    timetable: string;
     location: string;
     floor: string;
     seatNumber: string;
     totalAttendance: string;
     attendedAttendance: string;
-    lateAttendance: string;
     absentAttendance: string;
     result: string;
     remarks: string;
+    attendanceDetails: ChapelAttendance[];
 }
 
 export interface UsaintApiResponse<T = Record<string, never>> {

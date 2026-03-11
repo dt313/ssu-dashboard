@@ -1,6 +1,14 @@
-import { ChapelInfo, GraduationInfo, StudentInfo, TimetableInfo, TuitionInfo, UsaintApiRequest, UsaintApiResponse } from '@/types/api';
-import axios, { isAxiosError } from 'axios';
 import { useUsaintStore } from '@/store/use-usaint-store';
+import {
+    ChapelInfo,
+    GraduationInfo,
+    StudentInfo,
+    TimetableInfo,
+    TuitionInfo,
+    UsaintApiRequest,
+    UsaintApiResponse,
+} from '@/types/api';
+import axios, { isAxiosError } from 'axios';
 
 export const callStudentInfoApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<StudentInfo>> => {
     try {
@@ -66,9 +74,21 @@ export const callGraduationApi = async (data: UsaintApiRequest): Promise<UsaintA
     }
 };
 
-export const callChapelApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<ChapelInfo[]>> => {
+export const callChapelApi = async ({
+    appSessionId,
+    year,
+    semester,
+}: {
+    appSessionId: string;
+    year?: string;
+    semester?: string;
+}): Promise<UsaintApiResponse<ChapelInfo | null>> => {
     try {
-        const response = await axios.post<UsaintApiResponse<ChapelInfo[]>>('/api/usaint/chapel', data);
+        const response = await axios.post<UsaintApiResponse<ChapelInfo | null>>('/api/usaint/chapel', {
+            appSessionId,
+            year,
+            semester,
+        });
         if (response.data.success) {
             useUsaintStore.getState().setChapelInfo(response.data.data);
         }

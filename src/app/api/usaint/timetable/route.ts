@@ -50,28 +50,37 @@ export const POST = withErrorHandling(async (request: Request) => {
     }
 
     // 4️⃣ Fetch all rows from the table
-    const tableData = await table.getAllRows();
+    const tableData = await table.getVisibleRows();
 
     // 5️⃣ Convert to 2D array (headers + rows)
-    const timetableArray: string[][] = [];
-    
-    // Add headers
-    if (tableData.headers.length > 0) {
-        timetableArray.push(tableData.headers);
+    let headers = tableData.headers || [];
+    let rows = tableData.rows.map((row) => {
+        const cells = row.cells || [];
+        return cells.map((cell: any) => (cell.text || '').trim());
+    });
+
+    // 6️⃣ Filter out the Saturday ('토') column if it is empty
+    const satIdx = headers.findIndex((h) => h.includes('토'));
+    if (satIdx !== -1) {
+        const isSatEmpty = rows.every((row) => !row[satIdx] || row[satIdx].trim() === '');
+        if (isSatEmpty) {
+            headers = headers.filter((_, idx) => idx !== satIdx);
+            rows = rows.map((row) => row.filter((_, idx) => idx !== satIdx));
+        }
     }
 
-    // Add rows, filtering out completely empty ones
-    tableData.rows.forEach((row) => {
-        const cells = row.cells || [];
-        if (cells.length === 0) return;
+    // 7️⃣ Trim leading and trailing empty rows
+    const isRowEmpty = (row: string[]) => row.length === 0 || row.slice(1).every((cell) => !cell || cell.trim() === '');
 
-        const rowData = cells.map((cell: any) => (cell.text || '').trim());
-        
-        // Only add if the row contains at least one non-empty string
-        if (rowData.some((text) => text !== '')) {
-            timetableArray.push(rowData);
-        }
-    });
+    while (rows.length > 0 && isRowEmpty(rows[0])) {
+        rows = rows.slice(1);
+    }
+    while (rows.length > 0 && isRowEmpty(rows[rows.length - 1])) {
+        rows = rows.slice(0, -1);
+    }
+
+    // 8️⃣ Final assembly
+    const timetableArray: string[][] = [headers, ...rows];
 
     return NextResponse.json<UsaintApiResponse<string[][]>>({
         success: true,

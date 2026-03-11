@@ -130,33 +130,27 @@ export default function Home() {
                                     <Loader className="h-8 w-8 text-primary" />
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                                <div className="flex flex-col gap-6">
                                     {/* Left Column (Student Info + Tuition): Takes 2/5 width */}
-                                    <div className="lg:col-span-2 flex flex-col gap-6">
-                                        {studentInfo && <StudentInfoCard data={studentInfo} />}
-                                        <ChapelCard data={chapelInfo} studentId={studentInfo?.studentId} />
-                                        {tuitionInfo && tuitionInfo.length > 0 && <TuitionCard data={tuitionInfo} />}
+                                    <div className="flex gap-6  flex-col lg:flex-row">
+                                        <div className="flex flex-col gap-6 lg:max-w-100">
+                                            {studentInfo && <StudentInfoCard data={studentInfo} />}
+                                            <ChapelCard data={chapelInfo} studentId={studentInfo?.studentId} />
+                                        </div>
+                                        {/* Right Column (Graduation Audit): Takes 3/5 width */}
+                                        <div className="flex-1 min-w-150">
+                                            <TimetableCard data={timetableInfo} className="h-full" />
+                                        </div>
                                     </div>
 
-                                    {/* Right Column (Graduation Audit): Takes 3/5 width */}
-                                    <div className="lg:col-span-3">
-                                        {graduationInfo && (
-                                            <GraduationCard data={graduationInfo} className="h-full flex flex-col" />
-                                        )}
+                                    <div className="flex gap-6 lg:grid-cols-6 ">
+                                        <div className={'flex-1 min-w-150'}>
+                                            {graduationInfo && <GraduationCard data={graduationInfo} />}
+                                        </div>
+                                        <div className="gap-6 w-full lg:max-w-250">
+                                            {tuitionInfo && <TuitionCard data={tuitionInfo} />}
+                                        </div>
                                     </div>
-
-                                    {/* Bottom: Timetable (Full Width) */}
-                                    {timetableInfo && timetableInfo.length > 0 && (
-                                        <div className="lg:col-span-5">
-                                            <TimetableCard data={timetableInfo} />
-                                        </div>
-                                    )}
-
-                                    {!studentInfo && !tuitionInfo && !timetableInfo && !graduationInfo && (
-                                        <div className="lg:col-span-5 flex h-48 items-center justify-center rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-                                            <p className="text-zinc-500">Failed to load academic information.</p>
-                                        </div>
-                                    )}
                                 </div>
                             )
                         ) : (

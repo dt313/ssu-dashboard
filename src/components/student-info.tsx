@@ -53,7 +53,7 @@ export function StudentInfoCard({ data, className }: StudentInfoProps) {
 
             <div className="flex items-center justify-between p-4 px-8">
                 <Avatar
-                    className="relative h-24 w-24 border-2 border-white dark:border-zinc-900 shadow-sm md:h-32 md:w-32"
+                    className="relative h-24 w-24 mr-4 border-2 border-white dark:border-zinc-900 shadow-sm md:h-32 md:w-32"
                     size={60}
                     fallback={initials}
                     src={avatar}
@@ -64,35 +64,37 @@ export function StudentInfoCard({ data, className }: StudentInfoProps) {
             </div>
 
             <div className="flex items-center justify-between p-2 px-8">
-                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Current Term</span>
-                <p className="text-md text-primary tracking-tight">
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">학년/학기</span>
+                <p className="text-sm font-semibold text-primary tracking-tight">
                     {year}학년 {semester}학기
                 </p>
             </div>
 
+            {data.englishName && (
+                <div className="flex items-center justify-between p-2 px-8">
+                    <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">영어 이름</span>
+                    <p className="text-sm font-semibold text-primary tracking-tight">{englishName}</p>
+                </div>
+            )}
+
             <div className="flex items-center justify-between p-2 px-8">
-                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> English Name</span>
-                <p className="text-md text-primary tracking-tight">{englishName}</p>
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">학번</span>
+                <p className="text-sm font-semibold text-primary tracking-tight">{studentId}</p>
             </div>
 
             <div className="flex items-center justify-between p-2 px-8">
-                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Student ID </span>
-                <p className="text-md text-primary tracking-tight">{studentId}</p>
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">대학(원)</span>
+                <p className="text-sm font-semibold text-primary tracking-tight">{faculty}</p>
             </div>
 
             <div className="flex items-center justify-between p-2 px-8">
-                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Faculty </span>
-                <p className="text-md text-primary tracking-tight">{faculty}</p>
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">소속</span>
+                <p className="text-sm font-semibold text-primary tracking-tight">{department}</p>
             </div>
 
             <div className="flex items-center justify-between p-2 px-8">
-                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Department </span>
-                <p className="text-md text-primary tracking-tight">{department}</p>
-            </div>
-
-            <div className="flex items-center justify-between p-2 px-8">
-                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400"> Admission Date </span>
-                <p className="text-md text-primary tracking-tight">{admissionDate}</p>
+                <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">입학일자</span>
+                <p className="text-sm font-semibold font-medium text-primary tracking-tight">{admissionDate}</p>
             </div>
         </div>
     );

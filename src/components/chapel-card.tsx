@@ -41,8 +41,8 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
     const currentYear = now.getFullYear();
 
     // Selection state (default to current if data is not available or just use what's in data)
-    const initialYear = data?.year?.match(/\d+/)?.[0] || currentYear.toString();
-    const initialSemester = data?.semester?.includes('1학기') ? '090' : '092';
+    const initialYear = data?.year || currentYear.toString();
+    const initialSemester = data?.semester;
 
     const [selectedYear, setSelectedYear] = useState(initialYear);
     const [selectedSemester, setSelectedSemester] = useState(initialSemester);
@@ -178,7 +178,7 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
                     </button>
                 </div>
 
-                {data && (
+                {data?.attendanceDetails && data.attendanceDetails.length >= 8 && (
                     <div className="p-5 bg-zinc-50/50 dark:bg-zinc-900/20">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-3">
@@ -256,7 +256,7 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
                     </div>
                 )}
 
-                {data ? (
+                {data?.section ? (
                     <div className="group p-5 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                             <div className="flex-1 space-y-3.5">

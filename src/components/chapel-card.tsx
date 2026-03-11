@@ -68,8 +68,8 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
         try {
             await usaintService.callChapelApi({
                 appSessionId,
-                year: selectedYear,
-                semester: selectedSemester,
+                year: type === 'refresh' ? '' : selectedYear,
+                semester: type === 'refresh' ? '' : selectedSemester,
             });
         } catch (error) {
             console.error('Failed to fetch chapel data:', error);

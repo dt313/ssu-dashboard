@@ -1,6 +1,7 @@
 'use client';
 
 import { TuitionInfo } from '@/types/api';
+
 import { cn } from '@/utils/cn';
 
 interface TuitionCardProps {
@@ -30,7 +31,7 @@ export function TuitionCard({ data, className }: TuitionCardProps) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-100 dark:divide-zinc-900">
-                        {data.map((item, idx) => (
+                        {data.reverse().map((item, idx) => (
                             <tr key={`${item.year}-${item.semester}-${idx}`}>
                                 <td className="py-4 font-medium text-zinc-900 dark:text-zinc-50">
                                     {item.year} - {item.semester}

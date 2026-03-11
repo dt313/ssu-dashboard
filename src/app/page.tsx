@@ -143,11 +143,11 @@ export default function Home() {
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-6 lg:grid-cols-6 ">
+                                    <div className="flex gap-6 flex-col lg:flex-row lg:grid-cols-6 ">
                                         <div className={'flex-1 min-w-150'}>
                                             {graduationInfo && <GraduationCard data={graduationInfo} />}
                                         </div>
-                                        <div className="gap-6 w-full lg:max-w-250">
+                                        <div className="gap-6 w-full flex-1">
                                             {tuitionInfo && <TuitionCard data={tuitionInfo} />}
                                         </div>
                                     </div>

@@ -95,7 +95,7 @@ function TimetableContent({ data, subjectColorMap }: TimetableContentProps) {
                                 key={idx}
                                 className={cn(
                                     'pb-3 font-black text-zinc-400 uppercase tracking-widest',
-                                    idx === 0 ? 'w-[80px]' : '',
+                                    idx === 0 ? 'w-[70px]' : '',
                                 )}
                             >
                                 {header}

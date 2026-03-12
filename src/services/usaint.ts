@@ -118,3 +118,22 @@ export const callChapelApi = async ({
         throw error;
     }
 };
+
+export const callCategoryGrade = async (data: UsaintApiRequest): Promise<UsaintApiResponse<any>> => {
+    try {
+        console.log('App session', { data });
+        const response = await axios.post<UsaintApiResponse<any>>('/api/usaint/category-grade', data);
+        if (response.data.success) {
+            useUsaintStore.getState().setCategoryGrade(response.data.data);
+        }
+
+        console.log({ data: response.data });
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT category Grade API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};

@@ -101,6 +101,27 @@ export interface ChapelInfo {
     attendanceDetails: ChapelAttendance[];
 }
 
+export interface GradeSubject {
+    yearSemester: {
+        year: number;
+        semester: string;
+    };
+    code: string;
+    name: string;
+    credit: number;
+    grade: string;
+    score: string;
+    category: string;
+    isPassFail: boolean;
+    info: string;
+}
+
+export interface CategoryGradeInfo {
+    subjects: GradeSubject[];
+    bySemester: Record<string, GradeSubject[]>;
+    total: number;
+}
+
 export interface UsaintApiResponse<T = Record<string, never>> {
     success: boolean;
     data: T;

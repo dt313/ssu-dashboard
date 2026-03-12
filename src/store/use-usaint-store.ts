@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { ChapelInfo, GraduationInfo, StudentInfo, TuitionInfo, TuitionNotice } from '@/types/api';
+import { ChapelInfo, GraduationInfo, StudentInfo, TuitionInfo, TuitionNotice, CategoryGradeInfo } from '@/types/api';
 
 interface UsaintState {
     studentInfo: StudentInfo | null;
@@ -9,6 +9,7 @@ interface UsaintState {
     timetableInfo: string[][] | null;
     graduationInfo: GraduationInfo | null;
     chapelInfo: ChapelInfo | null;
+    categoryGrade: CategoryGradeInfo | null;
     
     setStudentInfo: (info: StudentInfo | null) => void;
     setTuitionInfo: (info: TuitionInfo[] | null) => void;
@@ -16,6 +17,7 @@ interface UsaintState {
     setTimetableInfo: (info: string[][] | null) => void;
     setGraduationInfo: (info: GraduationInfo | null) => void;
     setChapelInfo: (info: ChapelInfo | null) => void;
+    setCategoryGrade: (info: CategoryGradeInfo | null) => void;
     
     clearUsaintData: () => void;
 }
@@ -29,6 +31,7 @@ export const useUsaintStore = create<UsaintState>()(
             timetableInfo: null,
             graduationInfo: null,
             chapelInfo: null,
+            categoryGrade: null,
 
             setStudentInfo: (studentInfo) => set({ studentInfo }),
             setTuitionInfo: (tuitionInfo) => set({ tuitionInfo }),
@@ -36,6 +39,7 @@ export const useUsaintStore = create<UsaintState>()(
             setTimetableInfo: (timetableInfo) => set({ timetableInfo }),
             setGraduationInfo: (graduationInfo) => set({ graduationInfo }),
             setChapelInfo: (chapelInfo) => set({ chapelInfo }),
+            setCategoryGrade: (categoryGrade) => set({ categoryGrade }),
 
             clearUsaintData: () => set({
                 studentInfo: null,
@@ -44,6 +48,7 @@ export const useUsaintStore = create<UsaintState>()(
                 timetableInfo: null,
                 graduationInfo: null,
                 chapelInfo: null,
+                categoryGrade: null,
             }),
         }),
         {

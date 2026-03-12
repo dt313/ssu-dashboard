@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 
 import { useAuthStore } from '@/store/use-auth-store';
-import { useUsaintStore } from '@/store/use-usaint-store';
 import { useToastStore } from '@/store/use-toast-store';
+import { useUsaintStore } from '@/store/use-usaint-store';
 
+import { CategoryGradeCard } from '@/components/category-grade-card';
 import { ChapelCard } from '@/components/chapel-card';
 import { GraduationCard } from '@/components/graduation-card';
 import { StudentInfoCard } from '@/components/student-info';
@@ -15,6 +16,7 @@ import { TuitionCard } from '@/components/tuition-card';
 import { Loader } from '@/components/ui/loader';
 
 import { usaintService } from '@/services';
+
 import { getErrorMessage } from '@/utils/get-error-message';
 
 export default function Home() {
@@ -41,6 +43,7 @@ export default function Home() {
                     usaintService.callTimetableApi({ appSessionId }),
                     usaintService.callGraduationApi({ appSessionId }),
                     usaintService.callChapelApi({ appSessionId }),
+                    usaintService.callCategoryGrade({ appSessionId }),
                 ]);
 
                 // Check for failures and show toasts
@@ -54,10 +57,11 @@ export default function Home() {
                             'Timetable',
                             'Graduation Audit',
                             'Chapel Attendance',
+                            'Category Grade',
                         ];
-                        
+
                         console.error(`Error fetching ${apiNames[index]}:`, error);
-                        
+
                         if (error?.error === 'Session expired or invalid. Please login again.') {
                             logout();
                             return;
@@ -181,10 +185,17 @@ export default function Home() {
                                         </div>
                                         <div className="gap-6 w-full flex-1 flex flex-col">
                                             {tuitionInfo && (
-                                                <TuitionCard data={tuitionInfo} noticeData={tuitionNotice ?? undefined} />
+                                                <TuitionCard
+                                                    data={tuitionInfo}
+                                                    noticeData={tuitionNotice ?? undefined}
+                                                />
                                             )}
                                         </div>
                                     </div>
+
+                                    {useUsaintStore.getState().categoryGrade && (
+                                        <CategoryGradeCard data={useUsaintStore.getState().categoryGrade!} />
+                                    )}
                                 </div>
                             )
                         ) : (

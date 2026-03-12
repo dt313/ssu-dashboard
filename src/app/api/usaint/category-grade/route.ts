@@ -18,7 +18,7 @@ async function getGradeByCategory(studentId: string): Promise<Array<Record<strin
     const res = await fetch('https://office.ssu.ac.kr/oz70/server', {
         method: 'POST',
         headers: { 'Content-Type': 'application/octet-stream' },
-        body,
+        body: new Uint8Array(body) as unknown as BodyInit,
     });
 
     if (!res.ok) throw new Error(`OZ server error: ${res.status}`);

@@ -13,7 +13,7 @@ const GRADE_IDS = {
 };
 
 export const POST = withErrorHandling(async (request: Request) => {
-    const { appSessionId, adminssionYear, graduatedYear } = await request.json();
+    const { appSessionId, admissionYear } = await request.json();
 
     if (!appSessionId) {
         return NextResponse.json<ApiErrorResponse>({ error: 'Missing session ID' }, { status: 400 });
@@ -51,10 +51,10 @@ export const POST = withErrorHandling(async (request: Request) => {
         const yearCombobox = wda.getControlById<SapComboBox>(
             'ZCMW_PERIOD_RE.ID_0DC742680F42DA9747594D1AE51A0C69:VIW_MAIN.PERYR',
         );
-        const yearText = yearCombobox.el[0].attribs.value;
+        const yearText = (yearCombobox as any)?.el?.[0]?.attribs?.value || '';
         const year = yearText.replace('학년도', '');
 
-        if (parseInt(year) < parseInt(adminssionYear)) break;
+        if (!year || parseInt(year) < Number(admissionYear)) break;
 
         const table = wda.getControlById<SapTable>('ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1');
 

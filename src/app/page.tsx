@@ -205,9 +205,7 @@ export default function Home() {
 
                                     <div className="flex gap-6 flex-col lg:flex-row lg:grid-cols-6 ">
                                         <div className={'flex-1 lg:min-w-150'}>
-                                            {graduationInfo && (
-                                                <GraduationCard data={graduationInfo} timetableData={timetableInfo} />
-                                            )}
+                                            {graduationInfo && <GraduationCard data={graduationInfo} />}
                                         </div>
                                         <div className="gap-6 w-full flex-1 flex flex-col">
                                             {tuitionInfo && (

@@ -1,18 +1,18 @@
 'use client';
 
 import { TuitionNotice } from '@/types/api';
+
 import { DialogTitle, DialogWrapper } from '@/components/ui/dialog';
 
 interface TuitionInstallmentsModalProps {
     data: TuitionNotice;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+
     trigger?: React.ReactNode;
 }
 
-export function TuitionInstallmentsModal({ data, open, onOpenChange, trigger }: TuitionInstallmentsModalProps) {
+export function TuitionInstallmentsModal({ data, trigger }: TuitionInstallmentsModalProps) {
     return (
-        <DialogWrapper open={open} onOpenChange={onOpenChange} trigger={trigger ?? <div />}>
+        <DialogWrapper trigger={trigger ?? <div />}>
             <div className="p-6">
                 <div className="mb-6 flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800">
                     <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">

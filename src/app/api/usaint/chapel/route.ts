@@ -89,10 +89,10 @@ export const POST = withErrorHandling(async (request: Request) => {
     const attendanceTable = wda.getControlById<SapTable>(CHAPEL_IDS.ATTENDANCE);
     const attendanceData = await attendanceTable?.getVisibleRows();
 
-    const attendanceDetails: ChapelAttendance[] = attendanceData?.rows.map((row, i) => {
+    const attendanceDetails: ChapelAttendance[] = (attendanceData?.rows ?? []).map((row, i) => {
         const cells = row.cells;
         const type = cells[2]?.controls[0] as SapComboBox;
-        const finalType = type?.el[0].attribs.value; // Extract the actual attendance type value from the control
+        const finalType = (type as any)?.el?.[0]?.attribs?.value || '';
 
         return {
             section: cells[0]?.text ?? '',
@@ -102,6 +102,7 @@ export const POST = withErrorHandling(async (request: Request) => {
             department: cells[5]?.text ?? '',
             title: cells[6]?.text ?? '',
             status: cells[7]?.text ?? '',
+            evaluation: cells[8]?.text ?? '',
             remarks: cells[10]?.text ?? '',
         };
     });

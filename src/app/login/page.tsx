@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Loader } from '@/components/ui/loader';
 
 import { loginWithUsaint as apiLoginWithUsaint } from '@/services/auth';
+
 import { getErrorMessage } from '@/utils/get-error-message';
 
 export default function LoginPage() {
@@ -54,7 +55,19 @@ export default function LoginPage() {
             console.error('Login error:', error);
             showToast({
                 title: 'Login Failed',
-                message: getErrorMessage(error, 'Failed to login with u-SAINT'),
+                message: getErrorMessage(
+                    error as
+                        | Error
+                        | string
+                        | {
+                              message?: string;
+                              error?: string | { message?: string; details?: { message: string }[] };
+                              success?: boolean;
+                          }
+                        | null
+                        | undefined,
+                    'Failed to login with u-SAINT',
+                ),
                 type: 'error',
             });
         } finally {

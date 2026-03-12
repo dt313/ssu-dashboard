@@ -9,6 +9,8 @@ import { useUsaintStore } from '@/store/use-usaint-store';
 import { CategoryGradeCard } from '@/components/category-grade-card';
 import { ChapelCard } from '@/components/chapel-card';
 import { GraduationCard } from '@/components/graduation-card';
+import { ScholarshipCard } from '@/components/scholarship-card';
+import { SemesterGradeCard } from '@/components/semester-grade-card';
 import { StudentInfoCard } from '@/components/student-info';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { TimetableCard } from '@/components/timetable-card';
@@ -21,7 +23,17 @@ import { getErrorMessage } from '@/utils/get-error-message';
 
 export default function Home() {
     const { appSessionId, isAuthenticated, logout } = useAuthStore();
-    const { studentInfo, tuitionInfo, tuitionNotice, timetableInfo, graduationInfo, chapelInfo } = useUsaintStore();
+    const {
+        studentInfo,
+        tuitionInfo,
+        tuitionNotice,
+        timetableInfo,
+        graduationInfo,
+        chapelInfo,
+        categoryGrade,
+        semesterGrade,
+        scholarshipInfo,
+    } = useUsaintStore();
     const [isLoading, setIsLoading] = useState(false);
     const showToast = useToastStore((s) => s.show);
 
@@ -30,7 +42,17 @@ export default function Home() {
             if (!appSessionId || !isAuthenticated) return;
 
             // If we don't have any data yet, show the loader
-            if (!studentInfo && !tuitionInfo && !tuitionNotice && !timetableInfo && !graduationInfo && !chapelInfo) {
+            if (
+                !studentInfo &&
+                !tuitionInfo &&
+                !tuitionNotice &&
+                !timetableInfo &&
+                !graduationInfo &&
+                !chapelInfo &&
+                !categoryGrade &&
+                !semesterGrade &&
+                !scholarshipInfo
+            ) {
                 setIsLoading(true);
             }
 
@@ -44,6 +66,9 @@ export default function Home() {
                     usaintService.callGraduationApi({ appSessionId }),
                     usaintService.callChapelApi({ appSessionId }),
                     usaintService.callCategoryGrade({ appSessionId }),
+                    usaintService.callSemesterGradeApi({ appSessionId }),
+                    usaintService.callSemesterGradeOldVersionApi({ appSessionId }),
+                    usaintService.callScholarshipApi({ appSessionId }),
                 ]);
 
                 // Check for failures and show toasts
@@ -58,6 +83,7 @@ export default function Home() {
                             'Graduation Audit',
                             'Chapel Attendance',
                             'Category Grade',
+                            'Semester Grade',
                         ];
 
                         console.error(`Error fetching ${apiNames[index]}:`, error);
@@ -193,9 +219,9 @@ export default function Home() {
                                         </div>
                                     </div>
 
-                                    {useUsaintStore.getState().categoryGrade && (
-                                        <CategoryGradeCard data={useUsaintStore.getState().categoryGrade!} />
-                                    )}
+                                    {categoryGrade && <CategoryGradeCard data={categoryGrade} />}
+                                    {semesterGrade && <SemesterGradeCard data={semesterGrade} />}
+                                    {scholarshipInfo && <ScholarshipCard data={scholarshipInfo} />}
                                 </div>
                             )
                         ) : (

@@ -100,6 +100,38 @@ export interface ChapelInfo {
     remarks: string;
     attendanceDetails: ChapelAttendance[];
 }
+export interface SemesterGrade {
+    year: string;
+    semester: string;
+    appliedCredits: string;
+    earnedCredits: string;
+    pfCredits: string;
+    gpa: string;
+    scoreSum: string;
+    arithmeticAverage: string;
+    semesterRank: string;
+    totalRank: string;
+    academicWarning: string;
+    counseling: string;
+    repeat: string;
+}
+
+export interface SemesterGradeSummary {
+    appliedCredits: string;
+    earnedCredits: string;
+    scoreSum: string;
+    gpa: string;
+    arithmeticAverage: string;
+    pfCredits: string;
+}
+
+export interface SemesterGradeInfo {
+    grades: SemesterGrade[];
+    summary: {
+        academicRecord: SemesterGradeSummary;
+        proof: SemesterGradeSummary;
+    };
+}
 
 export interface GradeSubject {
     yearSemester: {
@@ -130,4 +162,16 @@ export interface UsaintApiResponse<T = Record<string, never>> {
 export interface ApiErrorResponse {
     error: string;
     html?: string;
+}
+
+export interface ScholarshipInfo {
+    year: string;
+    semester: string;
+    type: string;
+    name: string;
+    status: string;
+    rejectReason: string;
+    amount: string;
+    actualAmount: string;
+    processDate: string;
 }

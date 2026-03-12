@@ -1,7 +1,10 @@
 import { useUsaintStore } from '@/store/use-usaint-store';
 import {
+    CategoryGradeInfo,
     ChapelInfo,
     GraduationInfo,
+    ScholarshipInfo,
+    SemesterGradeInfo,
     StudentInfo,
     TimetableInfo,
     TuitionInfo,
@@ -119,18 +122,113 @@ export const callChapelApi = async ({
     }
 };
 
-export const callCategoryGrade = async (data: UsaintApiRequest): Promise<UsaintApiResponse<any>> => {
+export const callCategoryGrade = async (data: UsaintApiRequest): Promise<UsaintApiResponse<CategoryGradeInfo>> => {
     try {
-        console.log('App session', { data });
-        const response = await axios.post<UsaintApiResponse<any>>('/api/usaint/category-grade', data);
+        const response = await axios.post<UsaintApiResponse<CategoryGradeInfo>>('/api/usaint/category-grade', data);
         if (response.data.success) {
             useUsaintStore.getState().setCategoryGrade(response.data.data);
         }
-
-        console.log({ data: response.data });
         return response.data;
     } catch (error) {
         console.error('Error calling u-SAINT category Grade API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};
+
+export const callSemesterGradeApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<SemesterGradeInfo>> => {
+    try {
+        const response = await axios.post<UsaintApiResponse<SemesterGradeInfo>>('/api/usaint/grade-by-semester', data);
+        if (response.data.success) {
+            useUsaintStore.getState().setSemesterGrade(response.data.data);
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT Semester Grade API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};
+
+export const callSemesterGradeOldVersionApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<any>> => {
+    try {
+        const response = await axios.post<UsaintApiResponse<any>>('/api/usaint/grade-by-semester-old', data);
+
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT Semester Grade Old Version API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};
+
+export const callScholarshipApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<ScholarshipInfo[]>> => {
+    try {
+        const response = await axios.post<UsaintApiResponse<ScholarshipInfo[]>>('/api/usaint/scholarship', data);
+        if (response.data.success) {
+            useUsaintStore.getState().setScholarshipInfo(response.data.data);
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT Scholarship API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};
+
+export const callGradeBySemesterDetailApi = async ({
+    appSessionId,
+    year,
+    semester,
+    subjectCode,
+}: {
+    appSessionId: string;
+    year: string;
+    semester: string;
+    subjectCode: string;
+}): Promise<UsaintApiResponse<any>> => {
+    try {
+        const response = await axios.post<UsaintApiResponse<any>>('/api/usaint/grade-by-semester-detail', {
+            appSessionId,
+            year,
+            semester,
+            subjectCode,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT Grade Detail API:', error);
+        if (isAxiosError(error)) {
+            throw error.response?.data || error;
+        }
+        throw error;
+    }
+};
+
+export const callGradeDetailDebugApi = async ({
+    appSessionId,
+    admissionYear,
+}: {
+    appSessionId: string;
+    admissionYear: string;
+}): Promise<UsaintApiResponse<any>> => {
+    try {
+        const response = await axios.post<UsaintApiResponse<any>>('/api/usaint/grade-detail-debug', {
+            appSessionId,
+            admissionYear,
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Error calling u-SAINT Grade Detail Debug API:', error);
         if (isAxiosError(error)) {
             throw error.response?.data || error;
         }

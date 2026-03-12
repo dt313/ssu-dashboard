@@ -155,10 +155,10 @@ export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-x-auto">
-                <table className="w-full text-left text-sm">
-                    <thead>
-                        <tr className="bg-zinc-50/50 dark:bg-zinc-900/30 border-b border-zinc-100 dark:border-zinc-900 text-[10px] font-black uppercase text-zinc-400 tracking-widest">
+            <div className="flex-1 overflow-auto max-h-[500px]">
+                <table className="w-full text-left text-sm relative">
+                    <thead className="sticky top-0 z-10">
+                        <tr className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800 text-[10px] font-black uppercase text-zinc-400 tracking-widest">
                             <th className="py-4 pl-6 pr-2">Course Name</th>
                             <th className="py-4 px-2 text-center">Term</th>
                             <th className="py-4 px-2 text-center">Category</th>

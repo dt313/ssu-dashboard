@@ -22,7 +22,6 @@ export const POST = withErrorHandling(async (request: Request) => {
         );
     }
 
-    console.log('Retrieved SAP cookie from session:', storedCookie);
     // 2️⃣ Initialize WDA (Tuition program ID: ZCMW6520n)
     const wda = new SapWdaClient('https://ecc.ssu.ac.kr:8443', 'ZCMW6520n', storedCookie);
 

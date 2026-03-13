@@ -5,24 +5,28 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/use-auth-store';
 import { useToastStore } from '@/store/use-toast-store';
 import { useUsaintStore } from '@/store/use-usaint-store';
+import { LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { CategoryGradeCard } from '@/components/category-grade-card';
 import { ChapelCard } from '@/components/chapel-card';
+import { DashboardSkeleton } from '@/components/dashboard-skeleton';
 import { GraduationCard } from '@/components/graduation-card';
+import { LoginButton } from '@/components/login-button';
 import { ScholarshipCard } from '@/components/scholarship-card';
 import { SemesterGradeCard } from '@/components/semester-grade-card';
 import { StudentInfoCard } from '@/components/student-info';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 import { TimetableCard } from '@/components/timetable-card';
 import { TuitionCard } from '@/components/tuition-card';
-import { Loader } from '@/components/ui/loader';
 
 import { usaintService } from '@/services';
 
 import { getErrorMessage } from '@/utils/get-error-message';
 
 export default function Home() {
-    const { appSessionId, isAuthenticated, logout } = useAuthStore();
+    const router = useRouter();
+    const { appSessionId, isAuthenticated, isHydrated, logout } = useAuthStore();
     const {
         studentInfo,
         tuitionInfo,
@@ -36,6 +40,12 @@ export default function Home() {
     } = useUsaintStore();
     const [isLoading, setIsLoading] = useState(false);
     const showToast = useToastStore((s) => s.show);
+
+    useEffect(() => {
+        if (isHydrated && !isAuthenticated) {
+            router.push('/login');
+        }
+    }, [isAuthenticated, isHydrated, router]);
 
     useEffect(() => {
         const fetchUsaintData = async () => {
@@ -162,13 +172,16 @@ export default function Home() {
 
             <div className="relative z-10 flex flex-col items-center gap-8 p-4 pt-12 pb-24">
                 <div className="fixed top-4 right-4 flex gap-2 z-50">
-                    {isAuthenticated && (
+                    {isAuthenticated ? (
                         <button
                             onClick={() => logout()}
-                            className="rounded-md border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-900 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 dark:hover:bg-zinc-900 shadow-sm"
+                            className="flex h-9 w-9 items-center justify-center rounded-full border border-border transition-colors hover:bg-accent"
+                            aria-label="Logout"
                         >
-                            Logout
+                            <LogOut className="h-4 w-4" />
                         </button>
+                    ) : (
+                        <LoginButton />
                     )}
                     <ThemeToggleButton />
                 </div>
@@ -184,11 +197,11 @@ export default function Home() {
                     </header>
 
                     <main className="w-full">
-                        {isAuthenticated ? (
+                        {!isHydrated ? (
+                            <DashboardSkeleton />
+                        ) : isAuthenticated ? (
                             isLoading ? (
-                                <div className="flex h-48 items-center justify-center rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-                                    <Loader className="h-8 w-8 text-primary" />
-                                </div>
+                                <DashboardSkeleton />
                             ) : (
                                 <div className="flex flex-col gap-6">
                                     {/* Left Column (Student Info + Tuition): Takes 2/5 width */}
@@ -220,10 +233,14 @@ export default function Home() {
                                     {categoryGrade && <CategoryGradeCard data={categoryGrade} />}
                                     <div className="flex flex-col lg:flex-row gap-6 items-stretch">
                                         <div className="flex-1">
-                                            {semesterGrade && <SemesterGradeCard data={semesterGrade} className="h-full" />}
+                                            {semesterGrade && (
+                                                <SemesterGradeCard data={semesterGrade} className="h-full" />
+                                            )}
                                         </div>
                                         <div className="flex-1">
-                                            {scholarshipInfo && <ScholarshipCard data={scholarshipInfo} className="h-full" />}
+                                            {scholarshipInfo && (
+                                                <ScholarshipCard data={scholarshipInfo} className="h-full" />
+                                            )}
                                         </div>
                                     </div>
                                 </div>

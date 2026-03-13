@@ -101,20 +101,20 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
     return (
         <div
             className={cn(
-                'w-full overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950',
+                'w-full h-full flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950',
                 className,
             )}
         >
-            <div className="flex flex-col border-b border-zinc-100 p-5 dark:border-zinc-900/50 sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex border-b border-zinc-100 p-5 dark:border-zinc-900/50 items-center justify-between gap-4">
                 <div className="flex items-center gap-2.5">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
                         <Calendar className="h-5 w-5" />
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Chapel Attendance</h3>
+                            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">채플</h3>
                         </div>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Detailed semester records</p>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">채플 정보 및 출석 현황</p>
                     </div>
                 </div>
 
@@ -131,7 +131,7 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
             </div>
 
             <div className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-900/50 min-h-[100px] relative">
-                <div className="flex flex-col items-center justify-between gap-4 p-5 sm:flex-row">
+                <div className="flex  items-center justify-start gap-4 p-5">
                     <div className="flex items-center rounded-xl border border-zinc-100 bg-zinc-50/50 p-1 dark:border-zinc-800 dark:bg-zinc-900/50">
                         <div className="relative">
                             <select
@@ -151,7 +151,7 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
 
                         <div className="h-4 w-px bg-zinc-200 dark:bg-zinc-700" />
 
-                        <div className="relative">
+                        <div className="relative cursor-pointer">
                             <select
                                 value={selectedSemester}
                                 onChange={handleSemesterChange}
@@ -171,10 +171,9 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
                     <button
                         onClick={() => handleFetchData('search')}
                         disabled={isLoading}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-zinc-800 active:scale-95 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 sm:w-auto"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-xs font-bold text-white transition-all hover:bg-zinc-800 active:scale-95 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200 sm:w-auto "
                     >
                         {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-                        <span>Search Records</span>
                     </button>
                 </div>
 
@@ -315,7 +314,7 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex h-32 items-center justify-center p-8 text-center">
+                    <div className="flex flex-1 h-32 items-center justify-center p-8 text-center">
                         <div className="space-y-1">
                             <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
                                 No chapel records found for this term.

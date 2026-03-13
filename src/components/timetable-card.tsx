@@ -86,8 +86,8 @@ function TimetableContent({ data, subjectColorMap }: TimetableContentProps) {
     const rows = data.slice(1);
 
     return (
-        <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left text-[12px] sm:text-xs table-fixed min-w-[600px] border-separate border-spacing-y-0">
+        <div className="overflow-auto custom-scrollbar h-full">
+            <table className="w-full text-left text-[12px] sm:text-sm table-fixed min-w-[600px] border-separate border-spacing-y-0">
                 <thead>
                     <tr className="border-b border-zinc-100 dark:border-zinc-900">
                         {headers.map((header, idx) => (
@@ -95,7 +95,7 @@ function TimetableContent({ data, subjectColorMap }: TimetableContentProps) {
                                 key={idx}
                                 className={cn(
                                     'pb-3 font-black text-zinc-400 uppercase tracking-widest',
-                                    idx === 0 ? 'w-[70px]' : '',
+                                    idx === 0 ? 'w-[100px]' : '',
                                 )}
                             >
                                 {header}
@@ -119,14 +119,14 @@ function TimetableContent({ data, subjectColorMap }: TimetableContentProps) {
                                         className="py-3 pr-2 text-zinc-900 dark:text-zinc-50 break-words align-top relative border-b border-zinc-100 dark:border-zinc-900"
                                     >
                                         {cellIdx === 0 ? (
-                                            <span className="font-black text-zinc-400 dark:text-zinc-500 text-[11px] tabular-nums whitespace-nowrap transition-colors duration-300 group-hover:text-zinc-500 dark:group-hover:text-zinc-400">
+                                            <span className="font-black text-zinc-400 dark:text-zinc-500 text-xs md:text-sm tabular-nums whitespace-nowrap transition-colors duration-300 group-hover:text-zinc-500 dark:group-hover:text-zinc-400">
                                                 {cell.match(/\d{2}:\d{2}-\d{2}:\d{2}/)?.[0] || cell}
                                             </span>
                                         ) : parsed && palette ? (
                                             <div className="relative min-h-[70px] w-full">
                                                 <div
                                                     className={cn(
-                                                        'group/subject absolute inset-x-0 top-0 flex flex-col gap-1.5 rounded-xl border p-2.5 transition-all duration-300 ease-in-out z-0 hover:z-50 hover:shadow-xl hover:bg-white dark:hover:bg-zinc-900 hover:-translate-y-1',
+                                                        'group/subject absolute inset-x-0 top-0 flex flex-col gap-1.5 rounded-xl border p-2.5 transition-all duration-300 ease-in-out z-0 hover:z-50 hover:shadow-xl hover:bg-white dark:hover:bg-zinc-900 hover:-translate-y-1 active:z-50 active:shadow-xl active:bg-white dark:active:bg-zinc-900 active:-translate-y-1',
                                                         palette.bg,
                                                         palette.border,
                                                     )}
@@ -137,7 +137,7 @@ function TimetableContent({ data, subjectColorMap }: TimetableContentProps) {
                                                         />
                                                         <span
                                                             className={cn(
-                                                                'font-black text-[11px] leading-tight line-clamp-2 group-hover/subject:line-clamp-none transition-all duration-300',
+                                                                'font-black sm:text-xs md:text-sm leading-tight line-clamp-2 group-hover/subject:line-clamp-none group-active/subject:line-clamp-none transition-all duration-300',
                                                                 palette.text,
                                                             )}
                                                         >
@@ -147,7 +147,7 @@ function TimetableContent({ data, subjectColorMap }: TimetableContentProps) {
                                                     {parsed.location && (
                                                         <div className="flex items-start gap-1.5">
                                                             <MapPin className="mt-0.5 h-2.5 w-2.5 shrink-0 text-zinc-400 dark:text-zinc-50" />
-                                                            <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 leading-tight line-clamp-1 group-hover/subject:line-clamp-none transition-all duration-300">
+                                                            <span className="text-[10px] font-bold text-zinc-500 dark:text-zinc-400 leading-tight line-clamp-1 group-hover/subject:line-clamp-none group-active/subject:line-clamp-none transition-all duration-300">
                                                                 {parsed.location}
                                                             </span>
                                                         </div>
@@ -237,7 +237,7 @@ export function TimetableCard({ data, className }: TimetableCardProps) {
                         <Clock className="h-5 w-5" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Weekly Timetable</h3>
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">시간표</h3>
                         <p className="text-sm text-zinc-500 dark:text-zinc-400">Your scheduled classes</p>
                     </div>
                 </div>
@@ -262,7 +262,7 @@ export function TimetableCard({ data, className }: TimetableCardProps) {
                             <div className="flex items-center gap-2 mb-1">
                                 <span
                                     className={cn(
-                                        'text-[10px] font-black uppercase tracking-widest leading-none opacity-70',
+                                        'text-sm font-black uppercase tracking-widest leading-none opacity-70',
                                         nextClass.palette?.text,
                                     )}
                                 >
@@ -271,9 +271,7 @@ export function TimetableCard({ data, className }: TimetableCardProps) {
                                 {nextClass.location && (
                                     <div className="flex items-center gap-1 opacity-60">
                                         <MapPin className={cn('h-2.5 w-2.5', nextClass.palette?.text)} />
-                                        <span
-                                            className={cn('text-[9px] font-bold leading-none', nextClass.palette?.text)}
-                                        >
+                                        <span className={cn('text-xs font-bold leading-none', nextClass.palette?.text)}>
                                             {nextClass.location}
                                         </span>
                                     </div>
@@ -284,10 +282,7 @@ export function TimetableCard({ data, className }: TimetableCardProps) {
                                     {nextClass.subject}
                                 </span>
                                 <span
-                                    className={cn(
-                                        'text-[10px] font-bold tabular-nums opacity-80',
-                                        nextClass.palette?.text,
-                                    )}
+                                    className={cn('text-xs font-bold tabular-nums opacity-80', nextClass.palette?.text)}
                                 >
                                     {nextClass.time.split('-')[0]}
                                 </span>

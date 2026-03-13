@@ -87,7 +87,7 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                 </span>
                             )}
                         </div>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Tuition & payment records</p>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">등록금 및 납부 내역</p>
                     </div>
                 </div>
             </div>
@@ -125,15 +125,15 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                     {Math.round(percentage)}%
                                 </span>
                                 <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-tighter">
-                                    Paid
+                                    납부 완료
                                 </span>
                             </div>
                         </div>
 
                         <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                             <div className="rounded-2xl bg-zinc-50 p-5 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 transition-colors hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 shadow-sm">
-                                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2">
-                                    Latest Total (Net)
+                                <p className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-2">
+                                    최종 실납부액
                                 </p>
                                 <p className="text-2xl font-black text-zinc-900 dark:text-zinc-50 leading-none mb-2 tabular-nums">
                                     ₩{baselineTotal.toLocaleString()}
@@ -143,11 +143,11 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                 </p>
                             </div>
                             <div className="rounded-2xl bg-primary/5 p-5 dark:bg-primary/10 border border-primary/10 transition-colors hover:bg-primary/10 dark:hover:bg-primary/20 shadow-sm">
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">
-                                    Latest Paid
+                                <p className="text-xs font-black text-primary uppercase tracking-widest mb-2">
+                                    학년/학기
                                 </p>
                                 <p className="text-2xl font-black text-primary leading-none tabular-nums">
-                                    {latest.netAmount}
+                                    {latest.year} - {latest.semester}
                                 </p>
                             </div>
                         </div>
@@ -194,7 +194,7 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                 {noticeData.bankBrand}{' '}
                                 <span className="text-indigo-600 dark:text-indigo-400">{noticeData.bankNumber}</span>
                             </p>
-                            <p className="text-[11px] font-black text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
+                            <p className="text-xs font-black text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
                                 <span className="inline-block h-1.5 w-1.5 rounded-full bg-indigo-500" />
                                 예금주: {noticeData.bankAccountName}
                             </p>
@@ -210,20 +210,22 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                 </div>
                                 <span className="text-[10px] font-black uppercase tracking-widest">납부 기간</span>
                             </div>
-                            <TuitionInstallmentsModal
-                                data={noticeData}
-                                trigger={
-                                    <button className="flex items-center gap-1 rounded-lg bg-zinc-50 px-2 py-1 text-[10px] font-bold text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer">
-                                        분할 납부 상세
-                                        <ChevronRight className="h-3 w-3" />
-                                    </button>
-                                }
-                            />
+                            {noticeData.optional && noticeData.optional.length > 0 && (
+                                <TuitionInstallmentsModal
+                                    data={noticeData}
+                                    trigger={
+                                        <button className="flex items-center gap-1 rounded-lg bg-zinc-50 px-2 py-1 text-[10px] font-bold text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer">
+                                            분할 납부 상세
+                                            <ChevronRight className="h-3 w-3" />
+                                        </button>
+                                    }
+                                />
+                            )}
                         </div>
                         <div className="space-y-2">
                             <div className="flex flex-col gap-1.5">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase">
+                                    <span className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase">
                                         정기
                                     </span>
                                     <span className="text-xs font-black text-zinc-900 dark:text-zinc-50 tabular-nums">
@@ -231,7 +233,7 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black text-amber-700 dark:text-amber-50 uppercase">
+                                    <span className="text-[11px] font-black text-amber-700 dark:text-amber-50 uppercase">
                                         추가
                                     </span>
                                     <span className="text-[11px] font-black text-zinc-700 dark:text-zinc-300 tabular-nums">
@@ -246,14 +248,14 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
 
             {/* Past Records */}
             <div className="flex-1 overflow-x-auto p-6">
-                <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-4">과거 납부 내역</p>
+                <p className="text-sm font-black text-zinc-400 uppercase tracking-widest mb-4">과거 납부 내역</p>
                 <table className="w-full text-left text-sm">
                     <thead>
-                        <tr className="border-b border-zinc-100 dark:border-zinc-900 text-[10px] font-black uppercase text-zinc-400 tracking-widest">
-                            <th className="pb-3 pr-2 font-black">Term</th>
-                            <th className="pb-3 px-2 font-black text-center">Amount</th>
-                            <th className="pb-3 px-2 font-black text-center">Scholarship</th>
-                            <th className="pb-3 pl-2 text-right font-black">Net</th>
+                        <tr className="border-b border-zinc-100 dark:border-zinc-900 text-xs md:text-sm font-black uppercase text-zinc-400 tracking-widest">
+                            <th className="pb-3 pr-2 font-black">학기</th>
+                            <th className="pb-3 px-2 font-black text-center">등록금액</th>
+                            <th className="pb-3 px-2 font-black text-center">장학금액</th>
+                            <th className="pb-3 pl-2 text-right font-black">실납부액</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-zinc-100 dark:divide-zinc-900">
@@ -262,16 +264,16 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
                                 key={`${item.year}-${item.semester}-${idx}`}
                                 className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors"
                             >
-                                <td className="py-4 pr-2 font-bold text-zinc-900 dark:text-zinc-50 whitespace-nowrap text-xs">
+                                <td className="py-4 pr-2 font-bold text-zinc-900 dark:text-zinc-50 whitespace-nowrap text-sm">
                                     {item.year} - {item.semester}
                                 </td>
-                                <td className="py-4 px-2 text-zinc-500 dark:text-zinc-400 font-bold text-center tabular-nums text-xs">
+                                <td className="py-4 px-2 text-zinc-500 dark:text-zinc-400 font-bold text-center tabular-nums text-sm">
                                     {item.amount}
                                 </td>
-                                <td className="py-4 px-2 text-zinc-500 dark:text-zinc-400 font-bold text-center tabular-nums text-xs">
+                                <td className="py-4 px-2 text-zinc-500 dark:text-zinc-400 font-bold text-center tabular-nums text-sm">
                                     {item.scholarship}
                                 </td>
-                                <td className="py-4 pl-2 text-right font-black text-zinc-900 dark:text-zinc-50 tabular-nums text-xs">
+                                <td className="py-4 pl-2 text-right font-black text-zinc-900 dark:text-zinc-50 tabular-nums text-sm">
                                     {item.netAmount}
                                 </td>
                             </tr>

@@ -47,8 +47,8 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
                         <GraduationCap className="h-5 w-5" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">Graduation Audit</h3>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">Requirements & credits</p>
+                        <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">졸업사정표</h3>
+                        <p className="text-sm text-zinc-500 dark:text-zinc-400">졸업 요건 및 취득 학점 현황</p>
                     </div>
                 </div>
             </div>
@@ -75,18 +75,18 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
             <div className="flex-1 overflow-x-auto p-6">
                 <table className="w-full text-left text-sm">
                     <thead>
-                        <tr className="border-b border-zinc-100 dark:border-zinc-900 text-[10px] font-black uppercase text-zinc-400 tracking-widest">
-                            <th className="pb-3 pr-2">Domain</th>
-                            <th className="pb-3 px-2">Requirement</th>
-                            <th className="pb-3 px-2 text-center">Req.</th>
-                            <th className="pb-3 px-2 text-center">Earned</th>
+                        <tr className="border-b border-zinc-100 dark:border-zinc-900 text-xs md:text-sm font-black uppercase text-zinc-400 tracking-widest">
+                            <th className="pb-3 pr-2">이수구분</th>
+                            <th className="pb-3 px-2">졸업요건</th>
+                            <th className="pb-3 px-2 text-center">기준값</th>
+                            <th className="pb-3 px-2 text-center">계산값</th>
                             <th className="pb-3 pl-2 text-right">
                                 <div className="flex items-center justify-end gap-2">
-                                    <span>Result</span>
+                                    <span>결과</span>
                                     <select
                                         value={filter}
                                         onChange={(e) => setFilter(e.target.value as FilterStatus)}
-                                        className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1 text-[10px] font-black outline-none transition-all hover:bg-white focus:ring-1 focus:ring-primary dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400 dark:hover:bg-zinc-900 cursor-pointer"
+                                        className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-1 text-xs md:text-sm font-black outline-none transition-all hover:bg-white focus:ring-1 focus:ring-primary dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400 dark:hover:bg-zinc-900 cursor-pointer"
                                     >
                                         <option value="all">전체</option>
                                         <option value="satisfied">충족</option>
@@ -116,12 +116,12 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
                                         isInsufficient ? 'hover:bg-red-50/50 dark:hover:bg-red-900/10' : '',
                                     )}
                                 >
-                                    <td className="py-3 pr-2 text-zinc-500 text-[10px] font-bold align-top leading-tight w-[100px]">
+                                    <td className="py-3 pr-2 text-zinc-500 text-xs font-bold align-top leading-tight w-[100px]">
                                         {isFirstInDomain ? cat.domain : ''}
                                     </td>
                                     <td className="py-3 pr-2">
                                         <div className="flex items-center gap-2">
-                                            <span className="font-bold text-zinc-900 dark:text-zinc-50 text-xs">
+                                            <span className="font-xs text-zinc-900 dark:text-zinc-50 text-xs sm:text-sm">
                                                 {cat.requirement}
                                             </span>
                                             {hasSubjects && (
@@ -138,7 +138,7 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
                                                                 <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
                                                                     이수 과목 상세
                                                                 </DialogTitle>
-                                                                <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                                                                <DialogDescription className="text-xs text-zinc-500 dark:text-zinc-400">
                                                                     {cat.requirement}
                                                                 </DialogDescription>
                                                             </div>
@@ -170,16 +170,16 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
                                             )}
                                         </div>
                                     </td>
-                                    <td className="py-3 px-2 text-zinc-600 dark:text-zinc-400 text-center font-bold text-xs tabular-nums">
+                                    <td className="py-3 px-2 text-zinc-600 dark:text-zinc-400 text-center font-bold text-xs sm:text-sm tabular-nums">
                                         {cat.referenceValue}
                                     </td>
-                                    <td className="py-3 px-2 text-zinc-600 dark:text-zinc-400 text-center font-bold text-xs tabular-nums">
+                                    <td className="py-3 px-2 text-zinc-600 dark:text-zinc-400 text-center font-bold text-xs sm:text-sm tabular-nums">
                                         {cat.calculatedValue}
                                     </td>
                                     <td className="py-3 pl-2 text-right">
                                         <span
                                             className={cn(
-                                                'inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider',
+                                                'inline-flex rounded-full px-2.5 py-0.5 text-xs sm:text-sm font-black uppercase tracking-wider',
                                                 isSatisfied
                                                     ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                                                     : isInsufficient

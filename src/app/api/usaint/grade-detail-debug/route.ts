@@ -1,16 +1,22 @@
-import { ApiErrorResponse, UsaintApiRequest, UsaintApiResponse } from '@/types/api';
-import fs from 'fs';
+import { ApiErrorResponse, UsaintApiResponse } from '@/types/api';
 import { NextResponse } from 'next/server';
 import { SapButton, SapComboBox, SapTable, SapWdaClient } from 'usaint-lib';
 
 import { withErrorHandling } from '@/utils/api-handler';
 import { getSession } from '@/utils/session';
 
-const GRADE_IDS = {
-    TABLE: 'ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1',
-    SEARCH_BTN: 'ZCMB3W0017.ID_0001:VIW_MAIN.BTN_SEARCH',
-    DETAIL_BTN: (rowIndex: number) => `ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1_BTN_EDITOR.${rowIndex}`,
-};
+const YEAR_COMBOBOX_ID = 'ZCMW_PERIOD_RE.ID_0DC742680F42DA9747594D1AE51A0C69:VIW_MAIN.PERYR';
+const PREV_BTN_ID = 'ZCMW_PERIOD_RE.ID_0DC742680F42DA9747594D1AE51A0C69:VIW_MAIN.BUTTON_PREV';
+const MAIN_TABLE_ID = 'ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1';
+const DETAIL_TABLE_ID = 'ZCMB3W0017.ID_0001:V_DETAIL.TABLE';
+const DETAIL_BTN_PREFIX = 'ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1_BUTTON';
+
+function getCurrentYear(wda: SapWdaClient): string | null {
+    const yearCombobox = wda.getControlById<SapComboBox>(YEAR_COMBOBOX_ID);
+    const yearText = (yearCombobox as any)?.el?.[0]?.attribs?.value ?? '';
+    const year = yearText.replace('학년도', '').trim();
+    return year || null;
+}
 
 export const POST = withErrorHandling(async (request: Request) => {
     const { appSessionId, admissionYear } = await request.json();
@@ -30,81 +36,64 @@ export const POST = withErrorHandling(async (request: Request) => {
     const wda = new SapWdaClient('https://ecc.ssu.ac.kr:8443', 'ZCMB3W0017', storedCookie);
 
     const initResult = await wda.initialize();
-
     if (!initResult.isSuccess) {
         return NextResponse.json<ApiErrorResponse>(
-            {
-                error: 'Failed to initialize grade session.',
-                html: wda.$.html(),
-            },
+            { error: 'Failed to initialize grade session.', html: wda.$.html() },
             { status: 401 },
         );
     }
 
-    const preButton = wda.getControlById<SapButton>(
-        'ZCMW_PERIOD_RE.ID_0DC742680F42DA9747594D1AE51A0C69:VIW_MAIN.BUTTON_PREV',
-    );
-    const results = [];
-    let detailHeader: string[] | undefined = [];
+    const results: string[][][] = [];
+    let detailHeader: string[] | undefined;
 
     while (true) {
-        const yearCombobox = wda.getControlById<SapComboBox>(
-            'ZCMW_PERIOD_RE.ID_0DC742680F42DA9747594D1AE51A0C69:VIW_MAIN.PERYR',
-        );
-        const yearText = (yearCombobox as any)?.el?.[0]?.attribs?.value || '';
-        const year = yearText.replace('학년도', '');
-
+        // 1. Check current year — stop if below admission year
+        const year = getCurrentYear(wda);
         if (!year || parseInt(year) < Number(admissionYear)) break;
 
-        const table = wda.getControlById<SapTable>('ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1');
-
+        // 2. Get main table — skip year if table is missing or empty
+        const table = wda.getControlById<SapTable>(MAIN_TABLE_ID);
         if (!table) {
-            preButton?.press();
+            await wda.getControlById<SapButton>(PREV_BTN_ID)?.press();
             continue;
         }
 
-        const tableLength = (await table.getAllRows()).rows.length;
-
-        if (tableLength === 0) {
-            preButton?.press();
+        // 3. Fetch all rows once — reuse for both length and data
+        const { rows } = await table.getAllRows();
+        if (rows.length === 0) {
+            await wda.getControlById<SapButton>(PREV_BTN_ID)?.press();
             continue;
         }
 
-        for (let i = 1; i <= tableLength; i++) {
-            const detailBtn = wda.getControlById<SapButton>(`ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1_BUTTON.${i}`);
-            if (!detailBtn) {
-                continue;
-            }
-            await detailBtn?.press();
+        // 4. Iterate each row's detail button sequentially (SAP WDA is stateful)
+        for (let i = 1; i <= rows.length; i++) {
+            const detailBtn = wda.getControlById<SapButton>(`${DETAIL_BTN_PREFIX}.${i}`);
+            if (!detailBtn) continue;
 
-            const detailTable = wda.getControlById<SapTable>('ZCMB3W0017.ID_0001:V_DETAIL.TABLE');
-            const detailData = await detailTable?.getVisibleRows();
+            await detailBtn.press();
 
+            const detailTable = wda.getControlById<SapTable>(DETAIL_TABLE_ID);
+            if (!detailTable) continue;
+
+            // 5. Fetch header only once across all iterations
             if (!detailHeader) {
-                detailHeader = await detailTable?.getHeaders();
+                detailHeader = await detailTable.getHeaders();
             }
 
+            const detailData = await detailTable.getVisibleRows();
             if (!detailData) continue;
 
-            const result = detailData.rows.map((r) => {
-                return r.cells.map((c) => {
-                    return c.text;
-                });
-            });
+            const result = detailData.rows.map((row) => row.cells.map((cell) => cell.text));
 
             results.push(result);
         }
 
-        console.log({ results });
-        await preButton?.press();
+        // 6. Always await navigation to avoid race conditions
+        await wda.getControlById<SapButton>(PREV_BTN_ID)?.press();
     }
 
-    return NextResponse.json<UsaintApiResponse<any>>({
+    return NextResponse.json<UsaintApiResponse<{ results: string[][][]; detailHeader: string[] | undefined }>>({
         success: true,
-
-        data: {
-            results,
-            detailHeader,
-        },
+        data: { results, detailHeader },
     });
 });

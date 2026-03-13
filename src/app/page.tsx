@@ -203,7 +203,7 @@ export default function Home() {
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-6 flex-col lg:flex-row lg:grid-cols-6 ">
+                                    <div className="flex gap-6 flex-col lg:flex-row">
                                         <div className={'flex-1 lg:min-w-150'}>
                                             {graduationInfo && <GraduationCard data={graduationInfo} />}
                                         </div>
@@ -218,8 +218,14 @@ export default function Home() {
                                     </div>
 
                                     {categoryGrade && <CategoryGradeCard data={categoryGrade} />}
-                                    {semesterGrade && <SemesterGradeCard data={semesterGrade} />}
-                                    {scholarshipInfo && <ScholarshipCard data={scholarshipInfo} />}
+                                    <div className="flex flex-col lg:flex-row gap-6 items-stretch">
+                                        <div className="flex-1">
+                                            {semesterGrade && <SemesterGradeCard data={semesterGrade} className="h-full" />}
+                                        </div>
+                                        <div className="flex-1">
+                                            {scholarshipInfo && <ScholarshipCard data={scholarshipInfo} className="h-full" />}
+                                        </div>
+                                    </div>
                                 </div>
                             )
                         ) : (

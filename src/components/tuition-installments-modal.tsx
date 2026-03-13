@@ -1,8 +1,9 @@
 'use client';
 
 import { TuitionNotice } from '@/types/api';
+import { X } from 'lucide-react';
 
-import { DialogTitle, DialogWrapper } from '@/components/ui/dialog';
+import { DialogClose, DialogTitle, DialogWrapper } from '@/components/ui/dialog';
 
 interface TuitionInstallmentsModalProps {
     data: TuitionNotice;
@@ -18,6 +19,11 @@ export function TuitionInstallmentsModal({ data, trigger }: TuitionInstallmentsM
                     <DialogTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
                         분할 납부 상세 정보
                     </DialogTitle>
+                    <DialogClose asChild>
+                        <button className="rounded-full p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 cursor-pointer">
+                            <X className="h-5 w-5" />
+                        </button>
+                    </DialogClose>
                 </div>
                 <div className="overflow-x-auto py-4">
                     <table className="w-full text-left text-sm">

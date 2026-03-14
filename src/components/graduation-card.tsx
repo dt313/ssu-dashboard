@@ -127,9 +127,14 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
                                             {hasSubjects && (
                                                 <DialogWrapper
                                                     trigger={
-                                                        <button className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white dark:hover:bg-zinc-800 text-zinc-400 hover:text-primary dark:hover:text-primary shadow-sm border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 cursor-pointer">
-                                                            <Search className="h-3 w-3" />
-                                                        </button>
+                                                        <div className="relative group/tooltip">
+                                                            <button className="opacity-100 p-1 rounded-md hover:bg-white dark:hover:bg-zinc-800 text-zinc-400 hover:text-primary dark:hover:text-primary shadow-sm border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 cursor-pointer">
+                                                                <Search className="h-3 w-3" />
+                                                            </button>
+                                                            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 text-[10px] font-bold text-white bg-zinc-900 dark:bg-zinc-700 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                                                                Show subjects
+                                                            </span>
+                                                        </div>
                                                     }
                                                 >
                                                     <div className="p-6">

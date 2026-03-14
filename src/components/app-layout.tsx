@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-
 import { useAuthStore } from '@/store/use-auth-store';
+import { useUIStore } from '@/store/use-ui-store';
 import { LogOut } from 'lucide-react';
 import Link from 'next/link';
 
 import {
     BackgroundSelector,
-    BackgroundType,
     DashedGridBackground,
     DotsBackground,
     GradientBackground,
@@ -21,22 +19,16 @@ export function AppHeader({
     showAuth = true,
     showThemeToggle = true,
     showBackgroundSelector = false,
-    bgType,
-    setBgType,
 }: {
     showAuth?: boolean;
     showThemeToggle?: boolean;
     showBackgroundSelector?: boolean;
-    bgType?: BackgroundType;
-    setBgType?: (type: BackgroundType) => void;
 }) {
     const { isAuthenticated, logout, isHydrated } = useAuthStore();
 
     return (
         <div className="fixed top-4 right-4 flex gap-2 z-50">
-            {showBackgroundSelector && bgType && setBgType && (
-                <BackgroundSelector bgType={bgType} setBgType={setBgType} />
-            )}
+            {showBackgroundSelector && <BackgroundSelector />}
             {showAuth && (
                 <>
                     {isHydrated && isAuthenticated ? (
@@ -74,7 +66,7 @@ export function AppLayout({
     showThemeToggle?: boolean;
     showBackgroundSelector?: boolean;
 }) {
-    const [bgType, setBgType] = useState<BackgroundType>('dashed-grid');
+    const { bgType } = useUIStore();
 
     return (
         <div className="relative min-h-screen w-full bg-gray-50 dark:bg-zinc-900 transition-colors duration-300">
@@ -93,8 +85,6 @@ export function AppLayout({
                 showAuth={showAuth}
                 showThemeToggle={showThemeToggle}
                 showBackgroundSelector={showBackgroundSelector}
-                bgType={bgType}
-                setBgType={setBgType}
             />
             <div className="relative z-10 flex flex-col items-center gap-8 p-4 pt-12 pb-24">
                 <div className="w-full max-w-[1400px] flex flex-col gap-8">

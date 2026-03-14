@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { useUIStore } from '@/store/use-ui-store';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Palette } from 'lucide-react';
 
@@ -9,21 +10,16 @@ import { cn } from '@/utils';
 
 export type BackgroundType = 'dashed-grid' | 'dots' | 'gradient' | 'solid' | 'none';
 
-interface BackgroundSelectorProps {
-    bgType: BackgroundType;
-    setBgType: (type: BackgroundType) => void;
-}
-
 const options: { value: BackgroundType; label: string }[] = [
     { value: 'dashed-grid', label: 'Dashed Grid' },
     { value: 'dots', label: 'Dots' },
     { value: 'gradient', label: 'Gradient' },
     { value: 'solid', label: 'Solid Color' },
-    { value: 'none', label: 'None' },
 ];
 
-export function BackgroundSelector({ bgType, setBgType }: BackgroundSelectorProps) {
+export function BackgroundSelector() {
     const [isOpen, setIsOpen] = useState(false);
+    const { bgType, setBgType } = useUIStore();
 
     return (
         <div className="relative">

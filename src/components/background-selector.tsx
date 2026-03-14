@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import { useUIStore } from '@/store/use-ui-store';
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Palette } from 'lucide-react';
 
 import { cn } from '@/utils';

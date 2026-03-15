@@ -156,7 +156,7 @@ export function TuitionCard({ data, noticeData, className }: TuitionCardProps) {
             </div>
 
             {/* Notice Cards (Integrated if exists) */}
-            {noticeData && (
+            {noticeData && noticeData.bankNumber && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
                     {/* Bank Info Card */}
                     <div className="group relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-indigo-100 bg-white p-5 transition-all hover:border-indigo-200 hover:shadow-sm dark:border-indigo-900/30 dark:bg-zinc-950 dark:hover:border-indigo-800/50">

@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 
+import { AppLayout } from '@/app/app-layout';
 import { useAuthStore } from '@/store/use-auth-store';
 import { useToastStore } from '@/store/use-toast-store';
 import { useRouter } from 'next/navigation';
 
-import { AppLayout } from '@/components/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Loader } from '@/components/ui/loader';

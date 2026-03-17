@@ -59,7 +59,7 @@ export const POST = withErrorHandling(async (request: Request) => {
     let headers = (tableData.headers || []).map((h: Header) => (typeof h === 'string' ? h : h?.text || ''));
     let rows = tableData.rows.map((row) => {
         const cells = row.cells || [];
-        return cells.map((cell: SapTableCell) => (cell.text || '').trim());
+        return cells.map((cell: SapTableCellData) => (cell.text || '').trim());
     });
 
     // 6️⃣ Filter out the Saturday ('토') column if it is empty

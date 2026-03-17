@@ -56,7 +56,7 @@ export const POST = withErrorHandling(async (request: Request) => {
         console.log(`First row cells count: ${tableData.rows[0].cells.length}`);
     }
 
-    const getCellText = (row: SapTableRow, headerName: string) => {
+    const getCellText = (row: SapTableRowData, headerName: string) => {
         const idx = tableData.headers.findIndex((h) => h.includes(headerName));
         if (idx !== -1 && row.cells[idx]) {
             return row.cells[idx].text;

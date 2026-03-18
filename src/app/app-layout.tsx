@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useAuthStore } from '@/store/use-auth-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { LogOut } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 import {
     BackgroundSelector,
@@ -18,11 +19,14 @@ import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 export function AppHeader() {
     const { isHydrated, isAuthenticated, logout } = useAuthStore();
+    const pathname = usePathname();
+    const isLoginPage = pathname === '/login';
+
     return (
         <div className="fixed top-4 right-4 flex gap-2 z-50">
             <BackgroundSelector />
 
-            {isHydrated && isAuthenticated ? (
+            {isHydrated && isAuthenticated && !isLoginPage && (
                 <>
                     <button
                         onClick={() => logout()}
@@ -32,8 +36,6 @@ export function AppHeader() {
                         <LogOut className="h-4 w-4" />
                     </button>
                 </>
-            ) : (
-                <LoginButton />
             )}
             <ThemeToggleButton />
         </div>

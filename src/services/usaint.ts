@@ -189,7 +189,7 @@ export const callSubjectGradeDetailApi = async ({
     appSessionId: string;
     admissionYear: string;
     graduatedYear?: string;
-}): Promise<SubjectGradeDetailList> => {
+}): Promise<UsaintApiResponse<SubjectGradeDetailList>> => {
     try {
         const response = await axios.post<UsaintApiResponse<SubjectGradeDetailList>>(
             '/api/usaint/subject-grade-detail',
@@ -204,7 +204,7 @@ export const callSubjectGradeDetailApi = async ({
             useUsaintStore.getState().setSubjectGradeDetail(response.data.data);
         }
 
-        return response.data.data;
+        return response.data;
     } catch (error) {
         throw handleApiError(error, 'u-SAINT Subject Grade Detail API');
     }

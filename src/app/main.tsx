@@ -40,7 +40,7 @@ export default function Main() {
         categoryGrade,
         semesterGrade,
         scholarshipInfo,
-        setSubjectGradeDetail,
+        subjectGradeDetail,
     } = useUsaintStore();
     const { blurEffect } = useUIStore();
     const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +49,6 @@ export default function Main() {
     const [isFetchingGradeDetail, setIsFetchingGradeDetail] = useState(false);
     const showToast = useToastStore((s) => s.show);
     const initialFetchDone = useRef(false);
-    const debugFetchDone = useRef(false);
     const captureRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -109,7 +108,6 @@ export default function Main() {
                     message: 'Fetching latest information from uSAINT...',
                     type: 'info',
                 });
-                debugFetchDone.current = false;
             } else if (hasNoData) {
                 setIsLoading(true);
             }
@@ -141,6 +139,16 @@ export default function Main() {
                 ];
 
                 const results = await Promise.allSettled(fetchTasks);
+
+                if (isManualRefresh && studentInfo?.studentId) {
+                    const admissionYear = studentInfo.admissionDate.substring(0, 4);
+                    const graduatedYear = studentInfo.degreeConferralDate?.substring(0, 4);
+                    setIsFetchingGradeDetail(true);
+                    usaintService
+                        .callSubjectGradeDetailApi({ appSessionId, admissionYear, graduatedYear })
+                        .finally(() => setIsFetchingGradeDetail(false))
+                        .catch((err) => console.error('Error refetching grade detail:', err));
+                }
 
                 let hasLoggedOut = false;
                 results.forEach((result, index) => {
@@ -199,6 +207,8 @@ export default function Main() {
             categoryGrade,
             semesterGrade,
             scholarshipInfo,
+            subjectGradeDetail,
+            setIsFetchingGradeDetail,
             logout,
             showToast,
         ],
@@ -210,28 +220,6 @@ export default function Main() {
             initialFetchDone.current = true;
         }
     }, [isHydrated, isAuthenticated, appSessionId, fetchUsaintData]);
-
-    useEffect(() => {
-        if (isAuthenticated && appSessionId && studentInfo?.studentId && !debugFetchDone.current) {
-            debugFetchDone.current = true;
-            const admissionYear = studentInfo.admissionDate.substring(0, 4);
-            const graduatedYear = studentInfo.degreeConferralDate?.substring(0, 4);
-            setIsFetchingGradeDetail(true);
-            usaintService
-                .callSubjectGradeDetailApi({ appSessionId, admissionYear, graduatedYear })
-                .then(() => {
-                    showToast({
-                        title: 'Grade Details Loaded',
-                        message: 'Detailed grade information has been fetched successfully.',
-                        type: 'success',
-                    });
-                })
-                .catch((err) => {
-                    console.error('Error in background debug fetch:', err);
-                })
-                .finally(() => setIsFetchingGradeDetail(false));
-        }
-    }, [isAuthenticated, appSessionId, studentInfo, showToast, setSubjectGradeDetail]);
 
     return (
         <div>

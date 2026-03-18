@@ -37,6 +37,7 @@ export const useAuthStore = create<AuthState>()(
                     appSessionId: '',
                 });
                 useUsaintStore.getState().clearUsaintData();
+                localStorage.removeItem('usaint-storage');
             },
         }),
         {

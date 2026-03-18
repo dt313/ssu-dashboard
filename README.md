@@ -1,38 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SSU-Dashboard
 
-## Getting Started
+SSU-Dashboard is a modern, responsive dashboard for Soongsil University students to effortlessly track their academic progress. Built with Next.js, it provides a user-friendly interface to view grades, scholarships, tuition, and more, by leveraging the u-Saint portal data.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **📊 Academic Overview**: At-a-glance view of your current academic standing.
+- **📜 Grade Tracking**: Detailed semester-wise and category-wise grade information.
+- **📈 GPA Trends**: Visualize your GPA progression over time with an interactive chart.
+- **⛪ Chapel Attendance**: Keep track of your chapel attendance records.
+- **🎓 Graduation Status**: Check your progress towards graduation.
+- **💰 Scholarships & Tuition**: View your scholarship history and tuition details.
+- **📅 Timetable**: Access your class schedule.
+- **🌙 Dark Mode**: Switch between light and dark themes for comfortable viewing.
+- **📱 Responsive Design**: Fully responsive for use on both desktop and mobile devices.
+
+## 📸 Previews
+
+|                      Light Mode                      |                      Dark Mode                      |
+| :--------------------------------------------------: | :-------------------------------------------------: |
+|    ![SSU-Dashboard-Light](public/previews/1.png)     |    ![SSU-Dashboard-Dark](public/previews/2.png)     |
+| ![SSU-Dashboard-Light-Mobile](public/previews/3.png) | ![SSU-Dashboard-Dark-Mobile](public/previews/4.png) |
+
+## 🚀 Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/) (v20 or later)
+- [pnpm](https://pnpm.io/installation)
+
+### Installation
+
+1.  Clone the repo
+    ```sh
+    git clone https://github.com/your-username/ssu-dashboard.git
+    ```
+2.  Install PNPM packages
+    ```sh
+    pnpm install
+    ```
+3.  Run the development server
+    ```sh
+    pnpm dev
+    ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Built With
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- [Next.js](https://nextjs.org/) - React Framework
+- [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
+- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
+- [Zustand](https://github.com/pmndrs/zustand) - State Management
+- [Radix UI](https://www.radix-ui.com/) - UI Components
+- [Lucide React](https://lucide.dev/) - Icons
+- [usaint-lib](https://www.npmjs.com/package/usaint-lib) - u-Saint Scraper
 
-## Learn More
+## 🤝 Contributing
 
-To learn more about Next.js, take a look at the following resources:
+Contributions, issues, and feature requests are welcome!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📜 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-<!-- Test commit -->
+Distributed under the MIT License. See `LICENSE` for more information.

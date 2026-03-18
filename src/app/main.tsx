@@ -7,7 +7,7 @@ import { useToastStore } from '@/store/use-toast-store';
 import { useUIStore } from '@/store/use-ui-store';
 import { useUsaintStore } from '@/store/use-usaint-store';
 import { toPng } from 'html-to-image';
-import { Camera, RefreshCw, Settings } from 'lucide-react';
+import { Camera, Github, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -307,6 +307,18 @@ export default function Main() {
                     </a>
                 </div>
             )}
+
+            <footer className="mt-12 py-6 text-center">
+                <a
+                    href="https://github.com/dt313/ssu-dashboard"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+                >
+                    <Github className="h-4 w-4" />
+                    GitHub
+                </a>
+            </footer>
         </div>
     );
 }

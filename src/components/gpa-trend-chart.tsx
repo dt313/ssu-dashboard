@@ -18,7 +18,7 @@ export function GPATrendChart({ grades }: GPATrendChartProps) {
     const chartGrades = [...grades].reverse();
     const gpaPoints = chartGrades.map((g) => parseFloat(g.gpa) || 0);
 
-    if (gpaPoints.length === 0) return null;
+    if (gpaPoints.length <= 4) return null;
 
     // Dynamic scale: find min/max and add a small buffer
     const rawMin = Math.min(...gpaPoints);

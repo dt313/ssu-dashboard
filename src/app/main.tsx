@@ -147,6 +147,13 @@ export default function Main() {
                     setIsFetchingGradeDetail(true);
                     usaintService
                         .callSubjectGradeDetailApi({ appSessionId, admissionYear, graduatedYear })
+                        .then(() => {
+                            showToast({
+                                title: 'Grade Details Loaded',
+                                message: 'Detailed grade information has been fetched successfully.',
+                                type: 'success',
+                            });
+                        })
                         .finally(() => setIsFetchingGradeDetail(false))
                         .catch((err) => console.error('Error refetching grade detail:', err));
                 }
@@ -236,10 +243,17 @@ export default function Main() {
             setIsFetchingGradeDetail(true);
             usaintService
                 .callSubjectGradeDetailApi({ appSessionId, admissionYear, graduatedYear })
+                .then(() => {
+                    showToast({
+                        title: 'Grade Details Loaded',
+                        message: 'Detailed grade information has been fetched successfully.',
+                        type: 'success',
+                    });
+                })
                 .finally(() => setIsFetchingGradeDetail(false))
                 .catch((err) => console.error('Error fetching grade detail:', err));
         }
-    }, [isAuthenticated, appSessionId, studentInfo, subjectGradeDetail]);
+    }, [isAuthenticated, appSessionId, studentInfo, subjectGradeDetail, showToast]);
 
     return (
         <div>

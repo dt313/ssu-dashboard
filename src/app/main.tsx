@@ -49,6 +49,7 @@ export default function Main() {
     const [isFetchingGradeDetail, setIsFetchingGradeDetail] = useState(false);
     const showToast = useToastStore((s) => s.show);
     const initialFetchDone = useRef(false);
+    const gradeDetailFetchDone = useRef(false);
     const captureRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -220,6 +221,25 @@ export default function Main() {
             initialFetchDone.current = true;
         }
     }, [isHydrated, isAuthenticated, appSessionId, fetchUsaintData]);
+
+    useEffect(() => {
+        if (
+            !gradeDetailFetchDone.current &&
+            isAuthenticated &&
+            appSessionId &&
+            studentInfo?.studentId &&
+            !subjectGradeDetail
+        ) {
+            gradeDetailFetchDone.current = true;
+            const admissionYear = studentInfo.admissionDate.substring(0, 4);
+            const graduatedYear = studentInfo.degreeConferralDate?.substring(0, 4);
+            setIsFetchingGradeDetail(true);
+            usaintService
+                .callSubjectGradeDetailApi({ appSessionId, admissionYear, graduatedYear })
+                .finally(() => setIsFetchingGradeDetail(false))
+                .catch((err) => console.error('Error fetching grade detail:', err));
+        }
+    }, [isAuthenticated, appSessionId, studentInfo, subjectGradeDetail]);
 
     return (
         <div>

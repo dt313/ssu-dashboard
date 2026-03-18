@@ -29,9 +29,9 @@ export function SubjectsByGradeModal({ open, onOpenChange, grade, subjects }: Su
 
                 <div className="max-h-[60vh] overflow-y-auto pr-4">
                     <ul className="space-y-3">
-                        {subjects.map((subject) => (
+                        {subjects.map((subject, index) => (
                             <li
-                                key={subject.code}
+                                key={`${subject.code}-${index}`}
                                 className="flex gap-4 justify-between items-center p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900/50"
                             >
                                 <div className="flex flex-col">

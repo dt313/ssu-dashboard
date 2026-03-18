@@ -10,10 +10,11 @@ const PREV_BTN_ID = 'ZCMW_PERIOD_RE.ID_0DC742680F42DA9747594D1AE51A0C69:VIW_MAIN
 const MAIN_TABLE_ID = 'ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1';
 const DETAIL_TABLE_ID = 'ZCMB3W0017.ID_0001:V_DETAIL.TABLE';
 const DETAIL_BTN_PREFIX = 'ZCMB3W0017.ID_0001:VIW_MAIN.TABLE_1_BUTTON';
+const DETAIL_CLOSE_BTN_ID = 'ZCMB3W0017.ID_0001:W_POPUP.WDBUTTON_5';
 
 type SapComboBoxElement = SapComboBox & { el?: { attribs: { value: string } }[] };
 
-function getCurrentYear(wda: SapWdaClient): string | null {
+function getCurrentYear(wda: SapWdaClient) {
     const yearCombobox = wda.getControlById<SapComboBoxElement>(YEAR_COMBOBOX_ID);
     const yearText = yearCombobox?.el?.[0]?.attribs?.value ?? '';
     const year = yearText.replace('학년도', '').trim();
@@ -21,7 +22,7 @@ function getCurrentYear(wda: SapWdaClient): string | null {
 }
 
 export const POST = withErrorHandling(async (request: Request) => {
-    const { appSessionId, admissionYear } = await request.json();
+    const { appSessionId, admissionYear, graduatedYear } = await request.json();
 
     if (!appSessionId) {
         return NextResponse.json<ApiErrorResponse>({ error: 'Missing session ID' }, { status: 400 });
@@ -45,13 +46,25 @@ export const POST = withErrorHandling(async (request: Request) => {
         );
     }
 
-    const results: string[][][] = [];
-    let detailHeader: string[] | undefined;
+    // If graduatedYear is provided and current year > graduatedYear, select to graduatedYear
+    if (graduatedYear) {
+        const currentYear = getCurrentYear(wda);
+        if (currentYear && parseInt(currentYear) > parseInt(graduatedYear)) {
+            const yearCombo = wda.getControlById<SapComboBox>(YEAR_COMBOBOX_ID);
+            if (yearCombo) {
+                await yearCombo.selectByKey(graduatedYear);
+            }
+        }
+    }
+
+    const results: { header: string[]; data: string[][] }[] = [];
 
     while (true) {
-        // 1. Check current year — stop if below admission year
+        // 1. Check current year — stop if below admission year or above graduated year
         const year = getCurrentYear(wda);
+
         if (!year || parseInt(year) < Number(admissionYear)) break;
+        if (graduatedYear && parseInt(year) > parseInt(graduatedYear)) break;
 
         // 2. Get main table — skip year if table is missing or empty
         const table = wda.getControlById<SapTable>(MAIN_TABLE_ID);
@@ -75,27 +88,27 @@ export const POST = withErrorHandling(async (request: Request) => {
             await detailBtn.press();
 
             const detailTable = wda.getControlById<SapTable>(DETAIL_TABLE_ID);
-            if (!detailTable) continue;
-
-            // 5. Fetch header only once across all iterations
-            if (!detailHeader) {
-                detailHeader = await detailTable.getHeaders();
+            if (!detailTable) {
+                console.warn(`No detail table at row ${i}`);
+                continue;
             }
 
             const detailData = await detailTable.getAllRows();
-            if (!detailData) continue;
+            if (detailData) {
+                const header = detailTable.getHeaders();
+                const data = detailData.rows.map((row) => row.cells.map((cell) => cell.text));
 
-            const result = detailData.rows.map((row) => row.cells.map((cell) => cell.text));
+                results.push({ header, data });
+            }
 
-            results.push(result);
+            await wda.getControlById<SapButton>(DETAIL_CLOSE_BTN_ID)?.press();
         }
 
-        // 6. Always await navigation to avoid race conditions
         await wda.getControlById<SapButton>(PREV_BTN_ID)?.press();
     }
 
-    return NextResponse.json<UsaintApiResponse<{ results: string[][][]; detailHeader: string[] | undefined }>>({
+    return NextResponse.json<UsaintApiResponse<{ header: string[]; data: string[][] }[]>>({
         success: true,
-        data: { results, detailHeader },
+        data: results,
     });
 });

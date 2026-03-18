@@ -6,12 +6,25 @@ import {
     ScholarshipInfo,
     SemesterGradeInfo,
     StudentInfo,
+    SubjectGradeDetailList,
     TuitionInfo,
     TuitionNotice,
     UsaintApiRequest,
     UsaintApiResponse,
 } from '@/types/api';
 import axios, { isAxiosError } from 'axios';
+
+const handleApiError = (error: unknown, apiName: string) => {
+    console.error(`Error calling ${apiName}:`, error);
+    if (isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData && typeof responseData === 'object') {
+            throw { ...responseData, status: error.response?.status };
+        }
+        throw error;
+    }
+    throw error;
+};
 
 export const callStudentInfoApi = async (data: UsaintApiRequest): Promise<UsaintApiResponse<StudentInfo>> => {
     try {
@@ -21,11 +34,7 @@ export const callStudentInfoApi = async (data: UsaintApiRequest): Promise<Usaint
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT API');
     }
 };
 
@@ -37,11 +46,7 @@ export const callTuitionApi = async (data: UsaintApiRequest): Promise<UsaintApiR
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Tuition API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Tuition API');
     }
 };
 
@@ -53,11 +58,7 @@ export const callTuitionNoticeApi = async (data: UsaintApiRequest): Promise<Usai
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Tuition Notice API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Tuition Notice API');
     }
 };
 
@@ -69,11 +70,7 @@ export const callTimetableApi = async (data: UsaintApiRequest): Promise<UsaintAp
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Timetable API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Timetable API');
     }
 };
 
@@ -85,11 +82,7 @@ export const callGraduationApi = async (data: UsaintApiRequest): Promise<UsaintA
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Graduation API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Graduation API');
     }
 };
 
@@ -113,11 +106,7 @@ export const callChapelApi = async ({
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Chapel API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Chapel API');
     }
 };
 
@@ -129,11 +118,7 @@ export const callCategoryGrade = async (data: UsaintApiRequest): Promise<UsaintA
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT category Grade API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT category Grade API');
     }
 };
 
@@ -145,11 +130,7 @@ export const callSemesterGradeApi = async (data: UsaintApiRequest): Promise<Usai
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Semester Grade API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Semester Grade API');
     }
 };
 
@@ -159,11 +140,7 @@ export const callSemesterGradeOldVersionApi = async (data: UsaintApiRequest): Pr
 
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Semester Grade Old Version API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Semester Grade Old Version API');
     }
 };
 
@@ -175,11 +152,7 @@ export const callScholarshipApi = async (data: UsaintApiRequest): Promise<Usaint
         }
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Scholarship API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Scholarship API');
     }
 };
 
@@ -204,65 +177,35 @@ export const callGradeBySemesterDetailApi = async ({
 
         return response.data;
     } catch (error) {
-        console.error('Error calling u-SAINT Grade Detail API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
+        throw handleApiError(error, 'u-SAINT Grade Detail API');
     }
 };
 
-export const callGradeDetailDebugApi = async ({
+export const callSubjectGradeDetailApi = async ({
     appSessionId,
     admissionYear,
+    graduatedYear,
 }: {
     appSessionId: string;
     admissionYear: string;
-}): Promise<UsaintApiResponse<unknown>> => {
+    graduatedYear?: string;
+}): Promise<SubjectGradeDetailList> => {
     try {
-        const response = await axios.post<UsaintApiResponse<unknown>>('/api/usaint/grade-detail-debug', {
-            appSessionId,
-            admissionYear,
-        });
-
-        return response.data;
-    } catch (error) {
-        console.error('Error calling u-SAINT Grade Detail Debug API:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
-    }
-};
-
-export const startGradeSync = async (data: {
-    appSessionId: string;
-    admissionYear: string;
-    studentId: string;
-}): Promise<UsaintApiResponse<unknown>> => {
-    try {
-        const response = await axios.post<UsaintApiResponse<unknown>>('/api/usaint/grade-sync/start', data);
-        return response.data;
-    } catch (error) {
-        console.error('Error starting grade sync:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
-        }
-        throw error;
-    }
-};
-
-export const getGradeSyncStatus = async (studentId: string): Promise<UsaintApiResponse<unknown>> => {
-    try {
-        const response = await axios.get<UsaintApiResponse<unknown>>(
-            `/api/usaint/grade-sync/status?studentId=${studentId}`,
+        const response = await axios.post<UsaintApiResponse<SubjectGradeDetailList>>(
+            '/api/usaint/subject-grade-detail',
+            {
+                appSessionId,
+                admissionYear,
+                graduatedYear,
+            },
         );
-        return response.data;
-    } catch (error) {
-        console.error('Error getting sync status:', error);
-        if (isAxiosError(error)) {
-            throw error.response?.data || error;
+
+        if (response.data.success) {
+            useUsaintStore.getState().setSubjectGradeDetail(response.data.data);
         }
-        throw error;
+
+        return response.data.data;
+    } catch (error) {
+        throw handleApiError(error, 'u-SAINT Subject Grade Detail API');
     }
 };

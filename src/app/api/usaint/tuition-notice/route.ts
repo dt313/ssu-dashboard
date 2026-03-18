@@ -50,9 +50,7 @@ export const POST = withErrorHandling(async (request: Request) => {
         return NextResponse.json<ApiErrorResponse>({ error: 'Tuition table not found.' }, { status: 500 });
     }
 
-    const headers = await table.getHeaders();
     const tableData = await table.getVisibleRows();
-    console.log({ headers });
     const final: {
         mandatory: string[];
         optional: string[];

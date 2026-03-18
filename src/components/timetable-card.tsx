@@ -201,8 +201,8 @@ export function TimetableCard({ data, className }: TimetableCardProps) {
         const dayName = dayNames[currentDay];
 
         // Check today first
-        let dayIdx = currentDay;
-        let classesToday: {
+        const dayIdx = currentDay;
+        const classesToday: {
             subject: string;
             time: string;
             location: string;

@@ -5,6 +5,7 @@ import {
     ScholarshipInfo,
     SemesterGradeInfo,
     StudentInfo,
+    SubjectGradeDetailList,
     TuitionInfo,
     TuitionNotice,
 } from '@/types/api';
@@ -21,6 +22,7 @@ interface UsaintState {
     categoryGrade: CategoryGradeInfo | null;
     semesterGrade: SemesterGradeInfo | null;
     scholarshipInfo: ScholarshipInfo[] | null;
+    subjectGradeDetail: SubjectGradeDetailList | null;
 
     setStudentInfo: (info: StudentInfo | null) => void;
     setTuitionInfo: (info: TuitionInfo[] | null) => void;
@@ -31,6 +33,7 @@ interface UsaintState {
     setCategoryGrade: (info: CategoryGradeInfo | null) => void;
     setSemesterGrade: (info: SemesterGradeInfo | null) => void;
     setScholarshipInfo: (info: ScholarshipInfo[] | null) => void;
+    setSubjectGradeDetail: (info: SubjectGradeDetailList | null) => void;
 
     clearUsaintData: () => void;
 }
@@ -47,6 +50,7 @@ export const useUsaintStore = create<UsaintState>()(
             categoryGrade: null,
             semesterGrade: null,
             scholarshipInfo: null,
+            subjectGradeDetail: null,
 
             setStudentInfo: (studentInfo) => set({ studentInfo }),
             setTuitionInfo: (tuitionInfo) => set({ tuitionInfo }),
@@ -57,6 +61,7 @@ export const useUsaintStore = create<UsaintState>()(
             setCategoryGrade: (categoryGrade) => set({ categoryGrade }),
             setSemesterGrade: (semesterGrade) => set({ semesterGrade }),
             setScholarshipInfo: (scholarshipInfo) => set({ scholarshipInfo }),
+            setSubjectGradeDetail: (subjectGradeDetail) => set({ subjectGradeDetail }),
 
             clearUsaintData: () =>
                 set({
@@ -69,6 +74,7 @@ export const useUsaintStore = create<UsaintState>()(
                     categoryGrade: null,
                     semesterGrade: null,
                     scholarshipInfo: null,
+                    subjectGradeDetail: null,
                 }),
         }),
         {

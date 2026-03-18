@@ -55,19 +55,19 @@ export function GraduationCard({ data, className }: GraduationCardProps) {
 
             <div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-3 bg-zinc-50/30 dark:bg-zinc-900/10 border-b border-zinc-100 dark:border-zinc-900">
                 <div className="rounded-xl bg-white p-4 border border-zinc-100 dark:bg-zinc-950 dark:border-zinc-800 shadow-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Requirement</p>
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">졸업요건</p>
                     <p className="mt-1 text-xl font-black text-zinc-900 dark:text-zinc-50 tabular-nums">
                         {graduationCredits}
                     </p>
                 </div>
                 <div className="rounded-xl bg-white p-4 border border-zinc-100 dark:bg-zinc-950 dark:border-zinc-800 shadow-sm transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900">
-                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Recognized</p>
+                    <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">취득학점</p>
                     <p className="mt-1 text-xl font-black text-zinc-900 dark:text-zinc-50 tabular-nums">
                         {recognizedCredits}
                     </p>
                 </div>
                 <div className="rounded-xl bg-primary/5 p-4 border border-primary/10 transition-colors hover:bg-primary/10 dark:hover:bg-primary/20 shadow-sm">
-                    <p className="text-[10px] font-black text-primary uppercase tracking-widest">Result</p>
+                    <p className="text-[10px] font-black text-primary uppercase tracking-widest">결과</p>
                     <p className="mt-1 text-xl font-black text-primary">{graduationResult}</p>
                 </div>
             </div>

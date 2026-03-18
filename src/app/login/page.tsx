@@ -146,7 +146,11 @@ export default function LoginPage() {
                 </form>
 
                 <div className="text-center text-xs text-zinc-500 mt-4">
-                    <p>This application does not store your u-SAINT password.</p>
+                    <p>
+                        This is an unofficial app and is not affiliated with u-SAINT. It simply helps you view your
+                        academic information in a more convenient way using your login session. Your password is not
+                        stored, and we take care to keep your data secure. please use at your own discretion.
+                    </p>
                 </div>
             </div>
         </div>

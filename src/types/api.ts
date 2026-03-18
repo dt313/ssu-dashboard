@@ -191,3 +191,10 @@ export interface ScholarshipInfo {
     actualAmount: string;
     processDate: string;
 }
+
+export interface SubjectGradeDetail {
+    header: string[];
+    data: string[][];
+}
+
+export type SubjectGradeDetailList = SubjectGradeDetail[];

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
-import { CategoryGradeInfo, GradeSubject } from '@/types/api';
-import { ArrowDown, ArrowUp, ChevronDown, ClipboardCheck, Filter, Search, X } from 'lucide-react';
+import { useUsaintStore } from '@/store/use-usaint-store';
+import { CategoryGradeInfo, GradeSubject, SubjectGradeDetail } from '@/types/api';
+import { ArrowDown, ArrowUp, ChevronDown, ClipboardCheck, FileText, Filter, Search, X } from 'lucide-react';
 
 import { cn } from '@/utils';
 
+import { SubjectDetailModal } from './subject-detail-modal';
 import { SubjectsByGradeModal } from './subjects-by-grade-modal';
 
 interface CategoryGradeCardProps {
@@ -17,17 +19,17 @@ interface CategoryGradeCardProps {
 const GRADE_ORDER = ['A+', 'A0', 'A-', 'B+', 'B0', 'B-', 'C+', 'C0', 'C-', 'D+', 'D0', 'D-', 'F', 'P', 'N/A'] as const;
 
 const GRADE_COLORS: Record<string, string> = {
-    A: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
-    B: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-    C: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    D: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-    F: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    P: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-    N: 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400',
+    A: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-900/20',
+    B: 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-900/20',
+    C: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-900/20',
+    D: 'bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-900/20',
+    F: 'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-900/20',
+    P: 'bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-900/20',
+    N: 'bg-zinc-50 text-zinc-600 border-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
 };
 
 function getGradeColor(grade: string): string {
-    return GRADE_COLORS[grade.charAt(0)] || GRADE_COLORS.N;
+    return GRADE_COLORS[grade.charAt(0).toUpperCase()] || GRADE_COLORS.N;
 }
 
 function SortIcon({
@@ -136,18 +138,11 @@ function StatsBar({
 }
 
 function GradeCell({ grade }: { grade: string }) {
-    const isHighGrade = ['A+', 'A0', 'A-'].includes(grade);
     return (
         <span
             className={cn(
                 'inline-flex min-w-[2.2rem] justify-center rounded-lg px-2 py-1 text-md md:text-lg font-black tabular-nums shadow-sm border',
-                isHighGrade
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-900/20'
-                    : grade === 'F'
-                      ? 'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-900/20'
-                      : grade === 'P'
-                        ? 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-900/20'
-                        : 'bg-zinc-50 text-zinc-600 border-zinc-100 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700',
+                getGradeColor(grade),
             )}
         >
             {grade || '-'}
@@ -156,6 +151,7 @@ function GradeCell({ grade }: { grade: string }) {
 }
 
 export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
+    const { subjectGradeDetail } = useUsaintStore();
     const semesters = ['All Semesters', ...Object.keys(data.bySemester).sort((a, b) => b.localeCompare(a))];
 
     const categories = [
@@ -170,9 +166,10 @@ export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
     const [selectedSemester, setSelectedSemester] = useState('All Semesters');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortField, setSortField] = useState<'semester' | 'name' | 'grade'>('semester');
+    const [sortField, setSortField] = useState<'semester' | 'name' | 'grade'>('grade');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
     const [subjectsForGrade, setSubjectsForGrade] = useState<{ grade: string; subjects: GradeSubject[] } | null>(null);
+    const [selectedSubjectDetail, setSelectedSubjectDetail] = useState<SubjectGradeDetail | null>(null);
 
     const handleSort = (field: 'semester' | 'name' | 'grade') => {
         if (sortField === field) {
@@ -184,49 +181,60 @@ export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
     };
 
     const handleGradeClick = (grade: string) => {
-        const subjectsWithGrade = filteredSubjects.filter((s) => (s.grade || 'N/A') === grade);
+        const subjectsWithGrade = data.subjects.filter((s) => (s.grade || 'N/A') === grade);
         setSubjectsForGrade({ grade, subjects: subjectsWithGrade });
     };
 
-    const filteredSubjects = data.subjects
-        .filter((subject) => {
-            const semesterKey = `${subject.yearSemester.year}-${subject.yearSemester.semester}`;
-            const matchesSemester = selectedSemester === 'All Semesters' || semesterKey === selectedSemester;
-            const displayCategory = subject.category || 'Un-updated';
-            const matchesCategory = selectedCategory === 'All Categories' || displayCategory === selectedCategory;
-            const matchesSearch =
-                searchQuery === '' ||
-                subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                subject.code.toLowerCase().includes(searchQuery.toLowerCase());
-            return matchesSemester && matchesCategory && matchesSearch;
-        })
-        .sort((a, b) => {
-            if (sortField === 'grade') {
-                const gradeA = a.grade || 'N/A';
-                const gradeB = b.grade || 'N/A';
-                const idxA = GRADE_ORDER.indexOf(gradeA as (typeof GRADE_ORDER)[number]);
-                const idxB = GRADE_ORDER.indexOf(gradeB as (typeof GRADE_ORDER)[number]);
-                return sortDirection === 'asc' ? idxA - idxB : idxB - idxA;
-            }
-            if (sortField === 'name') {
-                return sortDirection === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-            }
-            const semA = `${a.yearSemester.year}-${a.yearSemester.semester}`;
-            const semB = `${b.yearSemester.year}-${b.yearSemester.semester}`;
-            if (semA !== semB) return sortDirection === 'asc' ? semA.localeCompare(semB) : semB.localeCompare(semA);
-            return a.name.localeCompare(b.name);
-        });
+    const handleSubjectDetailClick = (subjectCode: string) => {
+        const detail = subjectGradeDetail?.find((item) => item.data[0]?.[1] === subjectCode);
+        if (detail) {
+            setSelectedSubjectDetail(detail);
+        }
+    };
 
-    const totalCredits = filteredSubjects.reduce((acc, sub) => acc + sub.credit, 0);
-    const gradeCounts = filteredSubjects.reduce(
-        (acc, sub) => {
-            const grade = sub.grade || 'N/A';
-            acc[grade] = (acc[grade] || 0) + 1;
-            return acc;
-        },
-        {} as Record<string, number>,
-    );
-    const stats = { totalCredits, count: filteredSubjects.length, gradeCounts };
+    const filteredSubjects = useMemo(() => {
+        return data.subjects
+            .filter((subject) => {
+                const semesterKey = `${subject.yearSemester.year}-${subject.yearSemester.semester}`;
+                const matchesSemester = selectedSemester === 'All Semesters' || semesterKey === selectedSemester;
+                const displayCategory = subject.category || 'Un-updated';
+                const matchesCategory = selectedCategory === 'All Categories' || displayCategory === selectedCategory;
+                const matchesSearch =
+                    searchQuery === '' ||
+                    subject.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    subject.code.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesSemester && matchesCategory && matchesSearch;
+            })
+            .sort((a, b) => {
+                if (sortField === 'grade') {
+                    const gradeA = a.grade || 'N/A';
+                    const gradeB = b.grade || 'N/A';
+                    const idxA = GRADE_ORDER.indexOf(gradeA as (typeof GRADE_ORDER)[number]);
+                    const idxB = GRADE_ORDER.indexOf(gradeB as (typeof GRADE_ORDER)[number]);
+                    return sortDirection === 'asc' ? idxB - idxA : idxA - idxB;
+                }
+                if (sortField === 'name') {
+                    return sortDirection === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+                }
+                const semA = `${a.yearSemester.year}-${a.yearSemester.semester}`;
+                const semB = `${b.yearSemester.year}-${b.yearSemester.semester}`;
+                if (semA !== semB) return sortDirection === 'asc' ? semA.localeCompare(semB) : semB.localeCompare(semA);
+                return a.name.localeCompare(b.name);
+            });
+    }, [data.subjects, selectedSemester, selectedCategory, searchQuery, sortField, sortDirection]);
+
+    const stats = useMemo(() => {
+        const totalCredits = filteredSubjects.reduce((acc, sub) => acc + sub.credit, 0);
+        const gradeCounts = filteredSubjects.reduce(
+            (acc, sub) => {
+                const grade = sub.grade || 'N/A';
+                acc[grade] = (acc[grade] || 0) + 1;
+                return acc;
+            },
+            {} as Record<string, number>,
+        );
+        return { totalCredits, count: filteredSubjects.length, gradeCounts };
+    }, [filteredSubjects]);
 
     const isFiltered =
         selectedSemester !== 'All Semesters' || selectedCategory !== 'All Categories' || searchQuery !== '';
@@ -319,7 +327,16 @@ export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
                 <table className="w-full text-left text-sm relative">
                     <thead className="sticky top-0 z-10">
                         <tr className="bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-100 dark:border-zinc-800 text-sm font-black uppercase text-zinc-400 tracking-widest">
-                            <th className="py-4 pl-6 pr-2">과목명</th>
+                            <th className="py-4 pl-6 pr-2">
+                                <div className="flex items-center gap-2">
+                                    <span>과목명</span>
+                                    {subjectGradeDetail && subjectGradeDetail.length > 0 && (
+                                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+                                            DETAIL
+                                        </span>
+                                    )}
+                                </div>
+                            </th>
                             <th
                                 className="py-4 px-2 text-center cursor-pointer select-none hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
                                 onClick={() => handleSort('semester')}
@@ -345,26 +362,37 @@ export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
                     <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900/50">
                         {filteredSubjects.map((subject, idx) => {
                             const hasCategory = !!subject.category;
+                            const hasDetail = subjectGradeDetail?.some((item) => item.data[0]?.[1] === subject.code);
                             return (
                                 <tr
                                     key={`${subject.code}-${idx}`}
                                     className="group transition-all hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40"
                                 >
                                     <td className="py-4 pl-6 pr-2">
-                                        <div className="flex flex-col gap-0.5">
-                                            <span className="font-bold text-zinc-900 dark:text-zinc-50 text-xs md:text-sm line-clamp-1 group-hover:text-primary transition-colors">
-                                                {subject.name}
-                                            </span>
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-black text-zinc-400 tabular-nums bg-zinc-100 dark:bg-zinc-800 px-1 rounded">
-                                                    {subject.code}
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex flex-col gap-0.5 flex-1">
+                                                <span className="font-bold text-zinc-900 dark:text-zinc-50 text-xs md:text-sm line-clamp-1 group-hover:text-primary transition-colors">
+                                                    {subject.name}
                                                 </span>
-                                                {subject.info && (
-                                                    <span className="text-xs text-zinc-400 font-medium truncate">
-                                                        {subject.info}
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-black text-zinc-400 tabular-nums bg-zinc-100 dark:bg-zinc-800 px-1 rounded">
+                                                        {subject.code}
                                                     </span>
-                                                )}
+                                                    {subject.info && (
+                                                        <span className="text-xs text-zinc-400 font-medium truncate">
+                                                            {subject.info}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
+                                            {hasDetail && (
+                                                <button
+                                                    onClick={() => handleSubjectDetailClick(subject.code)}
+                                                    className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-zinc-800 text-zinc-400 hover:text-primary dark:hover:text-primary shadow-sm border border-zinc-200 dark:border-zinc-700 cursor-pointer transition-all"
+                                                >
+                                                    <FileText className="h-3.5 w-3.5" />
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                     <td className="py-4 px-2 text-center">
@@ -421,6 +449,11 @@ export function CategoryGradeCard({ data, className }: CategoryGradeCardProps) {
                     subjects={subjectsForGrade.subjects}
                 />
             )}
+
+            <SubjectDetailModal
+                detail={selectedSubjectDetail}
+                onOpenChange={(open) => !open && setSelectedSubjectDetail(null)}
+            />
         </div>
     );
 }

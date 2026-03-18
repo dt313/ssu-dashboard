@@ -8,6 +8,8 @@ import { Armchair, Calendar, ChevronDown, Clock, Info, Loader2, MapPin, RotateCw
 
 import { usaintService } from '@/services';
 
+import { getErrorMessage } from '@/utils/get-error-message';
+
 import { cn, getAcademicSemesters, getAcademicYears, getCurrentSemester, getCurrentYear } from '@/utils';
 
 import { ChapelAttendanceModal } from './chapel-attendance-modal';
@@ -19,7 +21,7 @@ interface ChapelCardProps {
 }
 
 export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
-    const { appSessionId } = useAuthStore();
+    const { appSessionId, logout } = useAuthStore();
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
@@ -58,6 +60,17 @@ export function ChapelCard({ data, studentId, className }: ChapelCardProps) {
             });
         } catch (error) {
             console.error('Failed to fetch chapel data:', error);
+
+            const errorMessage = getErrorMessage(error as Parameters<typeof getErrorMessage>[0]).toLowerCase();
+            const isUnauthorized =
+                (error as { status?: number; response?: { status?: number } })?.status === 401 ||
+                (error as { response?: { status?: number } })?.response?.status === 401 ||
+                errorMessage.includes('session expired') ||
+                errorMessage.includes('login again');
+
+            if (isUnauthorized) {
+                logout();
+            }
         } finally {
             if (type === 'refresh') setIsRefreshing(false);
             else setIsSearching(false);

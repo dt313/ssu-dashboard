@@ -20,7 +20,6 @@ import { SemesterGradeCard } from '@/components/semester-grade-card';
 import { StudentInfoCard } from '@/components/student-info';
 import { TimetableCard } from '@/components/timetable-card';
 import { TuitionCard } from '@/components/tuition-card';
-import { Switch } from '@/components/ui/switch';
 
 import { usaintService } from '@/services';
 
@@ -41,14 +40,16 @@ export default function Main() {
         categoryGrade,
         semesterGrade,
         scholarshipInfo,
+        setSubjectGradeDetail,
     } = useUsaintStore();
-    const { blurEffect, setBlurEffect } = useUIStore();
+    const { blurEffect } = useUIStore();
     const [isLoading, setIsLoading] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isCapturing, setIsCapturing] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
+    const [isFetchingGradeDetail, setIsFetchingGradeDetail] = useState(false);
     const showToast = useToastStore((s) => s.show);
     const initialFetchDone = useRef(false);
+    const debugFetchDone = useRef(false);
     const captureRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -108,6 +109,7 @@ export default function Main() {
                     message: 'Fetching latest information from uSAINT...',
                     type: 'info',
                 });
+                debugFetchDone.current = false;
             } else if (hasNoData) {
                 setIsLoading(true);
             }
@@ -140,6 +142,7 @@ export default function Main() {
 
                 const results = await Promise.allSettled(fetchTasks);
 
+                let hasLoggedOut = false;
                 results.forEach((result, index) => {
                     if (result.status === 'rejected') {
                         const error = result.reason;
@@ -147,8 +150,18 @@ export default function Main() {
 
                         console.error(`Error fetching ${name}:`, error);
 
-                        if (error?.error === 'Session expired or invalid. Please login again.') {
-                            logout();
+                        const isUnauthorized =
+                            error?.status === 401 ||
+                            error?.response?.status === 401 ||
+                            error?.error === 'Session expired or invalid. Please login again.' ||
+                            getErrorMessage(error).toLowerCase().includes('session expired') ||
+                            getErrorMessage(error).toLowerCase().includes('login again');
+
+                        if (isUnauthorized) {
+                            if (!hasLoggedOut) {
+                                logout();
+                                hasLoggedOut = true;
+                            }
                             return;
                         }
 
@@ -198,6 +211,28 @@ export default function Main() {
         }
     }, [isHydrated, isAuthenticated, appSessionId, fetchUsaintData]);
 
+    useEffect(() => {
+        if (isAuthenticated && appSessionId && studentInfo?.studentId && !debugFetchDone.current) {
+            debugFetchDone.current = true;
+            const admissionYear = studentInfo.admissionDate.substring(0, 4);
+            const graduatedYear = studentInfo.degreeConferralDate?.substring(0, 4);
+            setIsFetchingGradeDetail(true);
+            usaintService
+                .callSubjectGradeDetailApi({ appSessionId, admissionYear, graduatedYear })
+                .then(() => {
+                    showToast({
+                        title: 'Grade Details Loaded',
+                        message: 'Detailed grade information has been fetched successfully.',
+                        type: 'success',
+                    });
+                })
+                .catch((err) => {
+                    console.error('Error in background debug fetch:', err);
+                })
+                .finally(() => setIsFetchingGradeDetail(false));
+        }
+    }, [isAuthenticated, appSessionId, studentInfo, showToast, setSubjectGradeDetail]);
+
     return (
         <div>
             <header className="flex items-center flex-wrap justify-between gap-4 mb-6">
@@ -210,7 +245,12 @@ export default function Main() {
                     <p className="text-zinc-500 dark:text-zinc-400"> Manage your academic information in one place.</p>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-4 items-center">
+                    {isFetchingGradeDetail && (
+                        <span className="text-sm text-zinc-500 dark:text-zinc-400 animate-pulse">
+                            Fetching grade details...
+                        </span>
+                    )}
                     <button
                         onClick={() => fetchUsaintData(true)}
                         disabled={isRefreshing || isLoading}

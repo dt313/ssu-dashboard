@@ -14,7 +14,6 @@ import {
     GradientBackground,
     SolidBackground,
 } from '@/components/background-selector';
-import { LoginButton } from '@/components/login-button';
 import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 export function AppHeader() {
